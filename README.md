@@ -49,3 +49,11 @@ docker run \
     node:alpine \
     /bin/sh -c 'npm install && npm run dev'
 ```
+
+
+credits
+-------
+
+The part that communicates with DVB/VVO API is taken from [@kiliankoe](https://github.com/kiliankoe)'s
+repositories [dvbjs](https://github.com/kiliankoe/dvbjs) and [vvo](https://github.com/kiliankoe/vvo)
+and made suitable for a single page application in your browser.
