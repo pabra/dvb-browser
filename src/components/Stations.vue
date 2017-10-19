@@ -22,7 +22,8 @@
                         a(href="#" @click.prevent="showDeparture(station)")
                             | {{ station.city }}, {{ station.stop }}
                     td
-                        button(title="add to favorites" @click="addStation(station)") &#9733;
+                        button(title="add to favorites" @click="addStation(station)")
+                            i.material-icons star
 
                 tr(v-if="favoriteStations.length")
                     th(colspan="2") favorite stations
@@ -32,7 +33,8 @@
                         a(href="#" @click.prevent="showDeparture(station)")
                             | {{ station.city }}, {{ station.stop }}
                     td
-                        button(title="remove from favorites" @click="removeStation(station)") &#128465;
+                        button(title="remove from favorites" @click="removeStation(station)")
+                            i.material-icons delete_forever
 </template>
 
 <script>

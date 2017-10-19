@@ -36,41 +36,49 @@ export const modes = {
         title: 'Straßenbahn',
         name: 'tram',
         icon_url: 'https://www.dvb.de/assets/img/trans-icon/transport-tram.svg',
+        ligature: 'tram',
     },
     citybus: {
         title: 'Stadtbus',
         name: 'citybus',
         icon_url: 'https://www.dvb.de/assets/img/trans-icon/transport-bus.svg',
+        ligature: 'directions_bus',
     },
     intercitybus: {
         title: 'Regionalbus',
         name: 'intercitybus',
         icon_url: 'https://www.dvb.de/assets/img/trans-icon/transport-bus.svg',
+        ligature: 'directions_bus',
     },
     suburbanrailway: {
         title: 'S-Bahn',
         name: 'SuburbanRailway',
         icon_url: 'https://www.dvb.de/assets/img/trans-icon/transport-metropolitan.svg',
+        ligature: 'directions_railway',
     },
     train: {
         title: 'Zug',
         name: 'train',
         icon_url: 'https://www.dvb.de/assets/img/trans-icon/transport-train.svg',
+        ligature: 'train',
     },
     cableway: {
         title: 'Seil-/Schwebebahn',
         name: 'cableway',
         icon_url: 'https://www.dvb.de/assets/img/trans-icon/transport-lift.svg',
+        ligature: 'subway',
     },
     ferry: {
         title: 'Fähre',
         name: 'ferry',
         icon_url: 'https://www.dvb.de/assets/img/trans-icon/transport-ferry.svg',
+        ligature: 'directions_boat',
     },
     hailedsharedtaxi: {
         title: 'Anrufsammeltaxi (AST)/ Rufbus',
         name: 'hailedsharedtaxi',
         icon_url: 'https://www.dvb.de/assets/img/trans-icon/transport-alita.svg',
+        ligature: 'local_taxi',
     },
 };
 

@@ -1,6 +1,7 @@
 // import 'normalize-scss/sass/_normalize.scss';
 import 'normalize-scss/sass/normalize/_import-now.scss';
 import 'skeleton-scss/scss/skeleton.scss';
+import 'material-design-icons/iconfont/material-icons.css';
 
 import 'whatwg-fetch';
 import 'babel-polyfill';

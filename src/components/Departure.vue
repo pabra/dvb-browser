@@ -40,11 +40,15 @@
                             template(v-for="(departure, departureIndex) in departureModel[vehicle].data[line].data[direction].data")
                                 tr
                                     td(:rowspan="departureModel[vehicle].data[line].departureCount" v-if="directionIndex === 0 && departureIndex === 0")
-                                        img(
+                                        //- img(
+                                        //-     v-if="modes[vehicle.toLowerCase()]"
+                                        //-     :src="modes[vehicle.toLowerCase()].icon_url"
+                                        //-     class="vehicle"
+                                        //- )
+                                        i(
                                             v-if="modes[vehicle.toLowerCase()]"
-                                            :src="modes[vehicle.toLowerCase()].icon_url"
-                                            class="vehicle"
-                                        )
+                                        ).material-icons
+                                            | {{ modes[vehicle.toLowerCase()].ligature }}
                                         span(v-else class="vehicle") {{ vehicle }}
                                     td(:rowspan="departureModel[vehicle].data[line].departureCount" v-if="directionIndex === 0 && departureIndex === 0" class="line") {{ line }}
                                     td(:rowspan="departureModel[vehicle].data[line].data[direction].departureCount" v-if="departureIndex === 0" class="direction") &rarr; {{ direction }}
@@ -332,7 +336,7 @@
             this.getData();
             this.intervalRef = setInterval(() => {
                 this.now = new Date();
-            }, 5000);
+            }, 1000);
         },
         beforeDestroy() {
             if (this.intervalRef !== null) {

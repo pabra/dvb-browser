@@ -14,7 +14,7 @@ module.exports = {
         // Before setting to `true`, make sure to:
         // npm install --save-dev compression-webpack-plugin
         productionGzip: true,
-        productionGzipExtensions: ['html', 'js', 'css', 'map'],
+        productionGzipExtensions: ['html', 'js', 'css', 'map', 'svg', 'ttf', 'eot'],
         // Run the build command with an extra argument to
         // View the bundle analyzer report after build finishes:
         // `npm run build --report`
