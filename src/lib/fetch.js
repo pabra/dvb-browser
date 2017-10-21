@@ -12,6 +12,17 @@ function handleError(err) {
     };
 }
 
+// const response = require('./response.json');
+//
+// async function fetchJson() {
+//     return {
+//         ok: true,
+//         error: handleError(isObject('test')),
+//         text: '',
+//         data: response,
+//         status: 200,
+//     };
+// }
 async function fetchJson(options) {
     const defaults = {
         url: null,
