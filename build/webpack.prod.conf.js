@@ -8,6 +8,7 @@ var CopyWebpackPlugin = require('copy-webpack-plugin')
 var HtmlWebpackPlugin = require('html-webpack-plugin')
 var ExtractTextPlugin = require('extract-text-webpack-plugin')
 var OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
+var Visualizer = require('webpack-visualizer-plugin');
 
 var env = config.build.env
 
@@ -91,6 +92,7 @@ var webpackConfig = merge(baseWebpackConfig, {
         //     to: config.build.assetsSubDirectory,
         //     ignore: ['.*']
         // }])
+        new Visualizer({ filename: path.join(__dirname, 'dist/stats.html') }),
     ]
 })
 
