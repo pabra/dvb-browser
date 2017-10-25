@@ -106,6 +106,7 @@
             },
             departureTable() {
                 const tryInt = this.tryInt;
+                const departureCount = {};
                 const vehicleOrder = [
                     'tram',
                     'citybus',
@@ -126,6 +127,14 @@
 
                 if (!this.dummyData.departures) return [];
                 return this.dummyData.departures
+                    .filter((d) => {
+                        // 3 departures per direction
+                        const key = `${d.line}_${d.direction}`;
+                        if (!(key in departureCount)) departureCount[key] = 0;
+                        departureCount[key] += 1;
+
+                        return departureCount[key] <= 3;
+                    })
                     .sort((a, b) => {
                         const aVehIdx = vehicleOrder.indexOf(a.mode.name.toLowerCase());
                         const bVehIdx = vehicleOrder.indexOf(b.mode.name.toLowerCase());
