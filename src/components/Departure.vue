@@ -294,39 +294,29 @@
 
     @function line($color, $eo) {
         @if $eo == 'even' { @return $color; }
-        // @if $eo == 'odd' { @return darken($color, 5%); }
-        @if $eo == 'odd' { @return saturate(darken($color, 3%), 3%); }
+        @if $eo == 'odd' { @return darken($color, 3%); }
     }
 
     @function direction($color, $eo) {
         @if $eo == 'even' { @return $color; }
-        // @if $eo == 'odd' { @return darken($color, 5%); }
-        @if $eo == 'odd' { @return saturate(darken($color, 2%), 2%); }
+        @if $eo == 'odd' { @return lighten($color, 3%); }
     }
 
     @function departure($color, $eo) {
-        @if $eo == 'even' { @return $color;}
-        @if $eo == 'odd' { @return lighten($color, 3%); }
+        @if $eo == 'even' { @return $color; }
+        @if $eo == 'odd' { @return darken($color, 3%); }
     }
 
     @each $vehicle in tram, citybus, intercitybus, suburbanrailway, train, cableway, ferry, hailedsharedtaxi {
         $vehicle-class: 'tr.#{$vehicle}';
         $vehicle-bg-color: hsl(hue(map-get($v-colors, '#{$vehicle}2')), 25%, 85%);
         $vehicle-color: hsl(hue(map-get($v-colors, '#{$vehicle}2')), 70%, 50%);
-        #{$vehicle-class} {
-            td.vehicle {
-                background-color: $vehicle-bg-color;
-                // color: $vehicle-color;
-                // text-shadow: 0 0 2px $vehicle-color;
-            }
-        }
 
         @each $line-eo in even, odd {
             $line-class: '.line-#{$line-eo}';
-            // $line-bg-color: map-get($line, $line-eo);
             $line-bg-color: line($vehicle-bg-color, $line-eo);
             #{$vehicle-class}#{$line-class} {
-                td.line {
+                td.vehicle, td.line {
                     background-color: $line-bg-color;
                 }
             }
