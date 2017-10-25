@@ -92,7 +92,7 @@ var webpackConfig = merge(baseWebpackConfig, {
         //     to: config.build.assetsSubDirectory,
         //     ignore: ['.*']
         // }])
-        new Visualizer({ filename: path.join(__dirname, 'dist/stats.html') }),
+        new Visualizer({ filename: './stats.html' }),
     ]
 })
 
