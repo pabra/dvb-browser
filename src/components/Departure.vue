@@ -1,13 +1,18 @@
 <template lang="pug">
     div
         h1 Departure
-        div
-            router-link(:to="{ name: stationsName }") &lArr;
-        span station: {{ stationId }} - {{ dummyData.city }}, {{ dummyData.stop }}
 
-        button(@click="getData") &#8635;
+        p.station-name {{ apiData.city }}, {{ apiData.stop }} ({{ stationId }})
 
-        pre(v-if="!dummyData.status || !dummyData.status.Code || dummyData.status.Code !== 'Ok'") {{ dummyData.status }}
+        button(
+            class="reload"
+            :class="{loading}"
+            :disabled="loading"
+            @click="getData"
+        )
+            div.text &#8635;
+
+        pre(v-if="!apiData.status || !apiData.status.Code || apiData.status.Code !== 'Ok'") {{ apiData.status }}
 
         table.u-full-width
             thead
@@ -64,7 +69,8 @@
                 modes,
                 now: new Date(),
                 intervalRef: null,
-                dummyData: {},
+                loading: false,
+                apiData: {},
             };
         },
         props: {
@@ -74,36 +80,6 @@
             },
         },
         computed: {
-            departureModel() {
-                const mod = {};
-                if (!this.dummyData.departures) return mod;
-                this.dummyData.departures.forEach((departure) => {
-                    const vehicle = departure.mode.name;
-                    // debugger;
-                    // const line = parseInt(departure.line, 10) || departure.line;
-                    const line = departure.line;
-                    const direction = departure.direction;
-                    if (!(vehicle in mod)) {
-                        mod[vehicle] = { data: {}, departureCount: 0 };
-                    }
-                    if (!(line in mod[vehicle].data)) {
-                        mod[vehicle].data[line] = { data: {}, departureCount: 0 };
-                    }
-                    if (!(direction in mod[vehicle].data[line].data)) {
-                        mod[vehicle].data[line].data[direction] = { data: [], departureCount: 0 };
-                    }
-
-                    // // limit nr of depatures per direction
-                    // if (mod[vehicle].data[line].data[direction].departureCount >= 3) return;
-
-                    mod[vehicle].departureCount += 1;
-                    mod[vehicle].data[line].departureCount += 1;
-                    mod[vehicle].data[line].data[direction].departureCount += 1;
-                    mod[vehicle].data[line].data[direction].data.push(departure);
-                });
-                // debugger;
-                return mod;
-            },
             departureTable() {
                 const tryInt = this.tryInt;
                 const departureCount = {};
@@ -125,8 +101,8 @@
                 let directionEvenOdd = '';
                 let departureEvenOdd = '';
 
-                if (!this.dummyData.departures) return [];
-                return this.dummyData.departures
+                if (!this.apiData.departures) return [];
+                return this.apiData.departures
                     .filter((d) => {
                         // 3 departures per direction
                         const key = `${d.line}_${d.direction}`;
@@ -212,9 +188,11 @@
             async getData() {
                 if (!this.stationId) return;
                 // if (!this.stationId || 1) return;
+                this.loading = true;
                 const res = await fetchDeparture(this.stationId);
                 window.console.log('res', res);
-                this.dummyData = res;
+                this.apiData = res;
+                this.loading = false;
             },
             departureTitle(departure) {
                 return `${departure.scheduledTime.toLocaleString()} (${departure.arrivalTime.toLocaleString()})`;
@@ -281,6 +259,27 @@
         }
     }
 
+    .station-name {
+        font-weight: bold;
+    }
+
+    button.reload.loading {
+        .text {
+            animation-name: spin;
+            animation-duration: 1s;
+            animation-iteration-count: infinite;
+            animation-timing-function: linear;
+        }
+    }
+
+    @keyframes spin {
+        from {
+            transform:rotate(0deg);
+        }
+        to {
+            transform:rotate(360deg);
+        }
+    }
 
     $v-colors: (
         tram: #DD0B2F,
