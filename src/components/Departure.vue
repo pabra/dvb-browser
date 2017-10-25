@@ -6,6 +6,7 @@
 
         button(
             class="reload"
+            title="reload departures"
             :class="{loading}"
             :disabled="loading"
             @click="getData"
@@ -71,6 +72,7 @@
                 intervalRef: null,
                 loading: false,
                 apiData: {},
+                apiCalled: null,
             };
         },
         props: {
@@ -187,11 +189,13 @@
         methods: {
             async getData() {
                 if (!this.stationId) return;
+                if (this.loading) return;
                 // if (!this.stationId || 1) return;
                 this.loading = true;
                 const res = await fetchDeparture(this.stationId);
                 window.console.log('res', res);
                 this.apiData = res;
+                this.apiCalled = new Date();
                 this.loading = false;
             },
             departureTitle(departure) {
@@ -219,7 +223,9 @@
         created() {
             this.getData();
             this.intervalRef = setInterval(() => {
-                this.now = new Date();
+                if (this.loading) return;
+                if (new Date() - this.apiCalled > 60 * 1000) this.getData();
+                else this.now = new Date();
             }, 1000);
         },
         beforeDestroy() {
