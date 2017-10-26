@@ -9,7 +9,7 @@
             title="reload departures"
             :class="{loading}"
             :disabled="loading"
-            @click="getData"
+            @click="onReloadClicked"
         )
             div.text &#8635;
 
@@ -69,6 +69,7 @@
                 stationsName: Stations.name,
                 modes,
                 now: new Date(),
+                pageLoaded: new Date(),
                 intervalRef: null,
                 loading: false,
                 apiData: {},
@@ -219,13 +220,27 @@
                 const int = parseInt(string, 10);
                 return String(int) === String(string) ? int : string;
             },
+            onReloadClicked() {
+                this.pageLoaded = new Date();
+                this.getData();
+            },
         },
         created() {
             this.getData();
             this.intervalRef = setInterval(() => {
+                const now = new Date();
                 if (this.loading) return;
-                if (new Date() - this.apiCalled > 60 * 1000) this.getData();
-                else this.now = new Date();
+
+                const minute = 60 * 1000;
+                if (now - this.pageLoaded > 60 * minute && now - this.apiCalled > 10 * minute) {
+                    this.getData();
+                } else if (now - this.pageLoaded > 10 * minute && now - this.apiCalled > 5 * minute) {
+                    this.getData();
+                } else if (now - this.apiCalled > minute) {
+                    this.getData();
+                } else {
+                    this.now = now;
+                }
             }, 1000);
         },
         beforeDestroy() {
