@@ -22,8 +22,8 @@
                         a(href="#" @click.prevent="showDeparture(station)")
                             | {{ station.city }}, {{ station.stop }}
                     td
-                        button(title="add to favorites" @click="addStation(station)")
-                            i.material-icons star
+                        button.favorites.add(title="add to favorites" @click="addStation(station)")
+                            i.material-icons
 
                 tr(v-if="favoriteStations.length")
                     th(colspan="2") favorite stations
@@ -33,8 +33,8 @@
                         a(href="#" @click.prevent="showDeparture(station)")
                             | {{ station.city }}, {{ station.stop }}
                     td
-                        button(title="remove from favorites" @click="removeStation(station)")
-                            i.material-icons delete_forever
+                        button.favorites.remove(title="remove from favorites" @click="removeStation(station)")
+                            i.material-icons
 </template>
 
 <script>
@@ -100,6 +100,32 @@
 
             &:first-child {
                 width: 100%;
+            }
+
+            button.favorites {
+                &.remove {
+                    i::before {
+                        content: 'delete';
+                    }
+
+                    &:hover {
+                        i::before {
+                            content: 'delete_forever';
+                        }
+                    }
+                }
+
+                &.add {
+                    i::before {
+                        content: 'star_border';
+                    }
+
+                    &:hover {
+                        i::before {
+                            content: 'star';
+                        }
+                    }
+                }
             }
         }
 
