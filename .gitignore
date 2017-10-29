@@ -10,8 +10,10 @@
 .idea
 .vscode
 
+!yarn.lock
 .npm/
 .config/
+.cache/
 .ash_history
 node_modules/
 dist/
