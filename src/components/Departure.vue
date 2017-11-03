@@ -32,13 +32,13 @@
                         :title="`${d.mode.title}: ${d.line}`"
                     )
                         //- img(
-                        //-     v-if="modes[d.mode.name.toLowerCase()]"
-                        //-     :src="modes[d.mode.name.toLowerCase()].icon_url"
+                        //-     v-if="vehicles[d.mode.name.toLowerCase()]"
+                        //-     :src="vehicles[d.mode.name.toLowerCase()].icon_url"
                         //- )
                         i(
-                            v-if="modes[d.mode.name.toLowerCase()]"
+                            v-if="vehicles[d.mode.name.toLowerCase()]"
                         ).material-icons
-                            | {{ modes[d.mode.name.toLowerCase()].ligature }}
+                            | {{ vehicles[d.mode.name.toLowerCase()].ligature }}
                         span.vehicle(v-else) {{ d.mode.name }}
 
                     td.line(
@@ -59,7 +59,7 @@
 <script>
     import _ from 'lodash';
     import Stations from '@/components/Stations';
-    import { modes } from '@/lib/utils';
+    import { vehicles, vehicleOrder } from '@/lib/utils';
     import { fetchDeparture } from '@/lib/fetch';
 
     export default {
@@ -67,7 +67,7 @@
         data() {
             return {
                 stationsName: Stations.name,
-                modes,
+                vehicles,
                 now: new Date(),
                 pageLoaded: new Date(),
                 intervalRef: null,
@@ -86,16 +86,6 @@
             departureTable() {
                 const tryInt = this.tryInt;
                 const departureCount = {};
-                const vehicleOrder = [
-                    'tram',
-                    'citybus',
-                    'intercitybus',
-                    'suburbanrailway',
-                    'train',
-                    'cableway',
-                    'ferry',
-                    'hailedsharedtaxi',
-                ];
                 let vehiclePrev = '';
                 let vehicleEvenOdd = '';
                 let linePrev = '';

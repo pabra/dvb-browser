@@ -15,12 +15,13 @@
 
 <script>
     import Stations from '@/components/Stations';
+    import Settings from '@/components/Settings';
 
     export default {
         name: 'app',
         data() {
             return {
-                linkedComponents: [Stations],
+                linkedComponents: [Stations, Settings],
                 loading: false,
             };
         },
@@ -45,16 +46,21 @@
 
         #app {
             margin-top: 10px;
-        }
 
-        main {
-            button {
-                height: 30px;
-                line-height: 30px;
-                padding: 0 15px;
-                margin: 0;
-                font-size: 20px;
+            nav {
+                a {
+                    margin-right: 10px;
+                }
+            }
 
+            main {
+                button {
+                    height: 30px;
+                    line-height: 30px;
+                    padding: 0 15px;
+                    margin: 0;
+                    font-size: 20px;
+                }
             }
         }
     }

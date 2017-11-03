@@ -2,6 +2,7 @@
 // https://github.com/kiliankoe/vvo/wiki/WebAPI
 
 import { isObject, GK4toWGS84, parseMot } from '@/lib/utils';
+import store from '@/store';
 
 function handleError(err) {
     return {
@@ -108,6 +109,7 @@ export async function fetchSations(query) {
 }
 
 export async function fetchDeparture(stationId, offset = 0, limit = 30) {
+    if (store.getters.chosenMots.length === 0) return {};
     const now = new Date();
     const time = new Date(now.getTime() + (offset * 60 * 1000)).toISOString();
     const res = await fetchJson({
@@ -120,16 +122,7 @@ export async function fetchDeparture(stationId, offset = 0, limit = 30) {
             isarrival: false,
             shorttermchanges: true,
             mentzonly: false,
-            mot: [
-                'Tram',
-                'CityBus',
-                'IntercityBus',
-                'SuburbanRailway',
-                'Train',
-                'Cableway',
-                'Ferry',
-                'HailedSharedTaxi',
-            ],
+            mot: store.getters.chosenMots,
         },
     });
     window.console.log('res', res);
