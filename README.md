@@ -33,7 +33,7 @@ docker run \
     -u $(id -u):$(id -g) \
     -w /data \
     -e HOME=/data \
-    node:alpine \
+    node:8-alpine \
     /bin/sh -c 'npm install && npm run build'
 
 # run dev server using docker
@@ -46,7 +46,7 @@ docker run \
     -e HOME=/data \
     -p 8008:8008 \
     --name webpack-dev \
-    node:alpine \
+    node:8-alpine \
     /bin/sh -c 'npm install && npm run dev'
 ```
 
