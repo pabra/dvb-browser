@@ -29,21 +29,7 @@
 </script>
 
 <style lang="scss">
-    // @import "../node_modules/normalize-scss/sass/normalize/import-now";
-    // @import "../node_modules/normalize-scss/sass/normalize/variables";
-    // @import "../node_modules/normalize-scss/sass/normalize/vertical-rhythm";
-    // @import "../node_modules/normalize-scss/sass/normalize/normalize-mixin";
-
     body {
-        background-color: #eee;
-        background-color: #f4fbfe;;
-        // margin: 100px;
-
-        * {
-            transition-duration: 200ms;
-            transition-property: color, background-color, border-color, box-shadow, height, display;
-        }
-
         #app {
             margin-top: 10px;
 

@@ -245,6 +245,8 @@
 </script>
 
 <style lang="scss" scoped>
+    @import "~@/assets/scss/variables.scss";
+
     th,
     td {
         padding: 2px 2px 2px 0;
@@ -292,49 +294,33 @@
         }
     }
 
-    $v-colors: (
-        tram: #DD0B2F,
-        tram2: #f44336,
-        citybus: #005E79,
-        citybus2: #2196f3,
-        intercitybus: #005E79,
-        intercitybus2: #2196f3,
-        suburbanrailway: #009551,
-        suburbanrailway2: #4caf50,
-        train: #00A15E,
-        train2: #009688,
-        cableway: #95C11F,
-        cableway2: #8bc34a,
-        ferry: #00A5DF,
-        ferry2: #03a9f4,
-        hailedsharedtaxi: #FDC400,
-        hailedsharedtaxi2: #ffc107,
-    );
-
     @function line($color, $eo) {
         @if $eo == 'even' { @return $color; }
-        @if $eo == 'odd' { @return darken($color, 3%); }
+        @if $eo == 'odd' { @return darken($color, 1.2%); }
     }
 
     @function direction($color, $eo) {
         @if $eo == 'even' { @return $color; }
-        @if $eo == 'odd' { @return lighten($color, 3%); }
+        @if $eo == 'odd' { @return lighten($color, 1.2%); }
     }
 
     @function departure($color, $eo) {
         @if $eo == 'even' { @return $color; }
-        @if $eo == 'odd' { @return darken($color, 3%); }
+        @if $eo == 'odd' { @return darken($color, 1.2%); }
     }
 
     @each $vehicle in tram, citybus, intercitybus, suburbanrailway, train, cableway, ferry, hailedsharedtaxi {
         $vehicle-class: 'tr.#{$vehicle}';
-        $vehicle-bg-color: hsl(hue(map-get($v-colors, '#{$vehicle}2')), 25%, 85%);
-        $vehicle-color: hsl(hue(map-get($v-colors, '#{$vehicle}2')), 70%, 50%);
+        $vehicle-bg-color: hsl(hue(map-get($vehicle-colors, '#{$vehicle}2')), 90%, 97%);
+        $vehicle-color: hsl(hue(map-get($vehicle-colors, '#{$vehicle}2')), 50%, 40%);
 
         @each $line-eo in even, odd {
             $line-class: '.line-#{$line-eo}';
             $line-bg-color: line($vehicle-bg-color, $line-eo);
             #{$vehicle-class}#{$line-class} {
+                td.vehicle {
+                    color: $vehicle-color;
+                }
                 td.vehicle, td.line {
                     background-color: $line-bg-color;
                 }

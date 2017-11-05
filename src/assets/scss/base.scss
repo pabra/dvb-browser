@@ -1,0 +1,50 @@
+@import "~@/assets/scss/variables.scss";
+
+a {
+    color: $main-color-lighter;
+    text-decoration: none;
+
+    &:hover {
+        color: $main-color-darker;
+    }
+}
+
+.button.button-primary,
+button.button-primary,
+input[type="button"].button-primary,
+input[type="reset"].button-primary,
+input[type="submit"].button-primary {
+    background-color: $main-color-lighter;
+    border-color: $main-color-lighter;
+}
+
+.button.button-primary:focus,
+.button.button-primary:hover,
+button.button-primary:focus,
+button.button-primary:hover,
+input[type="button"].button-primary:focus,
+input[type="button"].button-primary:hover,
+input[type="reset"].button-primary:focus,
+input[type="reset"].button-primary:hover,
+input[type="submit"].button-primary:focus,
+input[type="submit"].button-primary:hover {
+    background-color: $main-color;
+    border-color: $main-color;
+}
+
+input[type="email"]:focus,
+input[type="number"]:focus,
+input[type="password"]:focus,
+input[type="search"]:focus,
+input[type="tel"]:focus,
+input[type="text"]:focus,
+input[type="url"]:focus,
+select:focus,
+textarea:focus {
+    border-color: $main-color;
+}
+
+* {
+    transition-duration: 200ms;
+    transition-property: color, background-color, border-color, box-shadow, height, display;
+}

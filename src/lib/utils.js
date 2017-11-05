@@ -38,7 +38,6 @@ export const vehicles = {
         mot: 'Tram',
         icon_url: 'https://www.dvb.de/assets/img/trans-icon/transport-tram.svg',
         ligature: 'tram',
-        color: '#DD0B2F',
     },
     citybus: {
         title: 'Stadtbus',
@@ -46,7 +45,6 @@ export const vehicles = {
         mot: 'CityBus',
         icon_url: 'https://www.dvb.de/assets/img/trans-icon/transport-bus.svg',
         ligature: 'directions_bus',
-        color: '#005E79',
     },
     intercitybus: {
         title: 'Regionalbus',
@@ -54,7 +52,6 @@ export const vehicles = {
         mot: 'IntercityBus',
         icon_url: 'https://www.dvb.de/assets/img/trans-icon/transport-bus.svg',
         ligature: 'directions_bus',
-        color: '#005E79',
     },
     suburbanrailway: {
         title: 'S-Bahn',
@@ -62,7 +59,6 @@ export const vehicles = {
         mot: 'SuburbanRailway',
         icon_url: 'https://www.dvb.de/assets/img/trans-icon/transport-metropolitan.svg',
         ligature: 'directions_railway',
-        color: '#009551',
     },
     train: {
         title: 'Zug',
@@ -70,7 +66,6 @@ export const vehicles = {
         mot: 'Train',
         icon_url: 'https://www.dvb.de/assets/img/trans-icon/transport-train.svg',
         ligature: 'train',
-        color: '#00A15E',
     },
     cableway: {
         title: 'Seil-/Schwebebahn',
@@ -78,7 +73,6 @@ export const vehicles = {
         mot: 'Cableway',
         icon_url: 'https://www.dvb.de/assets/img/trans-icon/transport-lift.svg',
         ligature: 'subway',
-        color: '#95C11F',
     },
     ferry: {
         title: 'Fähre',
@@ -86,7 +80,6 @@ export const vehicles = {
         mot: 'Ferry',
         icon_url: 'https://www.dvb.de/assets/img/trans-icon/transport-ferry.svg',
         ligature: 'directions_boat',
-        color: '#00A5DF',
     },
     hailedsharedtaxi: {
         title: 'Anrufsammeltaxi (AST)/ Rufbus',
@@ -94,7 +87,6 @@ export const vehicles = {
         mot: 'HailedSharedTaxi',
         icon_url: 'https://www.dvb.de/assets/img/trans-icon/transport-alita.svg',
         ligature: 'local_taxi',
-        color: '#FDC400',
     },
 };
 
