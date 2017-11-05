@@ -25,10 +25,10 @@
                         button.favorites.add(title="add to favorites" @click="addStation(station)")
                             i.material-icons
 
-                tr(v-if="favoriteStations.length")
+                tr(v-if="sortedFavoriteStations.length")
                     th(colspan="2") favorite stations
 
-                tr(v-for="station in favoriteStations" :key="station.id")
+                tr(v-for="station in sortedFavoriteStations" :key="station.id")
                     td
                         a(href="#" @click.prevent="showDeparture(station)")
                             | {{ station.city }}, {{ station.stop }}
@@ -38,7 +38,7 @@
 </template>
 
 <script>
-    import { mapState } from 'vuex';
+    import { mapGetters } from 'vuex';
     import LabeledInput from '@/components/LabeledInput';
     import Departure from '@/components/Departure';
     import { fetchSations } from '@/lib/fetch';
@@ -52,7 +52,7 @@
             };
         },
         computed: {
-            ...mapState(['favoriteStations']),
+            ...mapGetters(['sortedFavoriteStations']),
         },
         methods: {
             addStation(station) {

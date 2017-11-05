@@ -20,6 +20,22 @@ export default new Vuex.Store({
                 return mots;
             }, []);
         },
+        sortedFavoriteStations(state) {
+            return state.favoriteStations
+                .slice()
+                .sort((a, b) => {
+                    if (!a.city || !a.stop) return -1;
+                    if (!b.city || !b.stop) return 1;
+
+                    if (a.city < b.city) return -1;
+                    if (a.city > b.city) return 1;
+
+                    if (a.stop < b.stop) return -1;
+                    if (a.stop > b.stop) return 1;
+
+                    return 0;
+                });
+        },
     },
     mutations: {
         addStation(state, station) {
