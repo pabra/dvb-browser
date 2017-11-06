@@ -96,7 +96,7 @@
     table {
         th,
         td {
-            padding: 2px 2px 2px 0;
+            padding: 2px 0;
 
             &:first-child {
                 width: 100%;

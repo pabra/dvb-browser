@@ -5,7 +5,7 @@
         <input v-if="type==='text'"
             ref="valueEl"
             type="text"
-            class="label-body u-full-width"
+            class="u-full-width"
             :readonly="readonly"
             :disabled="disabled"
             v-model.trim="localValue"
@@ -13,7 +13,7 @@
         <input v-if="type==='url'"
             ref="valueEl"
             type="url"
-            class="label-body u-full-width"
+            class="u-full-width"
             :readonly="readonly"
             :disabled="disabled"
             v-model.trim="localValue"
@@ -27,7 +27,7 @@
             />
         <textarea v-if="type==='textarea'"
             ref="valueEl"
-            class="label-body u-full-width"
+            class="u-full-width"
             :class="{monospace}"
             :readonly="readonly"
             :disabled="disabled"
@@ -40,7 +40,7 @@
             class="button-primary"
             >{{ value }}</button>
 
-        <span class="label-body message" v-show="errorMessage">{{ errorMessage }}</span>
+        <span class="message" v-show="errorMessage">{{ errorMessage }}</span>
     </label>
 </template>
 
