@@ -16,12 +16,13 @@
 <script>
     import Stations from '@/components/Stations';
     import Settings from '@/components/Settings';
+    import About from '@/components/About';
 
     export default {
         name: 'app',
         data() {
             return {
-                linkedComponents: [Stations, Settings],
+                linkedComponents: [Stations, Settings, About],
                 loading: false,
             };
         },
