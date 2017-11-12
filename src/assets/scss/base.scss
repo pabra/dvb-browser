@@ -46,5 +46,6 @@ textarea:focus {
 
 * {
     transition-duration: 200ms;
-    transition-property: color, background-color, border-color, box-shadow, height, display;
+    transition-property: color, background-color, border-color, box-shadow, height, display, opacity, top, left;
+    transition-timing-function: ease;
 }
