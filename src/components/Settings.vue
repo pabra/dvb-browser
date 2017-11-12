@@ -3,17 +3,20 @@
         h1 Settings
 
         h4 vehicles
-
         div
             button(
                 v-for="vehicle of vehicleOrder"
-                :class="getVehicleClass(vehicle)"
+                :class="[getVehicleClass(vehicle), 'vehicle']"
                 :title="vehicles[vehicle].title"
-                @click.prevent="click(vehicle)"
+                @click.prevent="toggleVehicle(vehicle)"
             )
                 i.material-icons(
                     :class="vehicle"
                 ) {{ vehicles[vehicle].ligature }}
+
+        h4 reset
+        p This will delete all stored data in you browser.
+        button(@click="clearData") clear data
 </template>
 
 <script>
@@ -32,7 +35,7 @@
             ...mapState(['chosenVehicles']),
         },
         methods: {
-            click(vehicle) {
+            toggleVehicle(vehicle) {
                 window.console.log('vehicle', vehicle);
                 if (this.chosenVehicles.indexOf(vehicle) > -1) {
                     this.$store.commit('removeVehicle', vehicle);
@@ -47,6 +50,9 @@
                     [vehicle]: true,
                 };
             },
+            clearData() {
+                this.$store.commit('clearStorage');
+            },
         },
     };
 </script>
@@ -54,7 +60,7 @@
 <style lang="scss" scoped>
     @import "~@/assets/scss/variables.scss";
 
-    button {
+    button.vehicle {
         padding: 2px !important;
         margin-right: 2px !important;
         color: #e0e0e0;

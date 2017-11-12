@@ -4,14 +4,19 @@ import { getJsonStorage, vehicles } from '@/lib/utils';
 
 Vue.use(Vuex);
 
+const defaultStates = {
+    favoriteStations() { return []; },
+    chosenVehicles() { return ['tram', 'citybus', 'cableway', 'ferry', 'hailedsharedtaxi']; },
+};
+
 export default new Vuex.Store({
     // In strict mode, whenever Vuex state is mutated outside of mutation handlers,
     // an error will be thrown.
     // Do not enable strict mode when deploying for production!
     strict: process.env.NODE_ENV !== 'production',
     state: {
-        favoriteStations: getJsonStorage('favoriteStations', []),
-        chosenVehicles: getJsonStorage('chosenVehicles', ['tram', 'citybus', 'cableway', 'ferry', 'hailedsharedtaxi']),
+        favoriteStations: getJsonStorage('favoriteStations', defaultStates.favoriteStations()),
+        chosenVehicles: getJsonStorage('chosenVehicles', defaultStates.chosenVehicles()),
     },
     getters: {
         chosenMots(state) {
@@ -38,6 +43,7 @@ export default new Vuex.Store({
         },
     },
     mutations: {
+        /* eslint-disable no-param-reassign */
         addStation(state, station) {
             const idx = state.favoriteStations.findIndex(s => s.id === station.id);
             if (idx > -1) return;
@@ -61,6 +67,11 @@ export default new Vuex.Store({
             if (idx === -1) return;
             state.chosenVehicles.splice(idx, 1);
             localStorage.setItem('chosenVehicles', JSON.stringify(state.chosenVehicles));
+        },
+        clearStorage(state) {
+            localStorage.clear();
+            state.favoriteStations = defaultStates.favoriteStations();
+            state.chosenVehicles = defaultStates.chosenVehicles();
         },
     },
 });
