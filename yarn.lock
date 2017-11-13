@@ -6212,6 +6212,10 @@ vue-template-es2015-compiler@^1.6.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/vue-template-es2015-compiler/-/vue-template-es2015-compiler-1.6.0.tgz#dc42697133302ce3017524356a6c61b7b69b4a18"
 
+vue-translate-plugin@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/vue-translate-plugin/-/vue-translate-plugin-1.2.0.tgz#11dd2ccf881196beac18929b59c6d3e9393daa40"
+
 vue@^2.4.2:
   version "2.5.3"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.5.3.tgz#e1a3b1f49b6e93e574ce040b95cbc873912fecc1"

@@ -1,6 +1,6 @@
 <template lang="pug">
     div
-        h1 Stations
+        h1(v-translate=1) _Stations
 
         LabeledInput(
             v-model.trim="findStation"

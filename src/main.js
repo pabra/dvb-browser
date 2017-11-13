@@ -7,9 +7,10 @@ import 'whatwg-fetch';
 import 'babel-polyfill';
 
 import Vue from 'vue';
-import App from '@/App';
+import '@/locales';
 import router from '@/router';
 import store from '@/store';
+import App from '@/App';
 
 import '@/assets/scss/base.scss';
 

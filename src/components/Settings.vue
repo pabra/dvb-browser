@@ -1,8 +1,13 @@
 <template lang="pug">
     div
-        h1 Settings
+        h3(v-translate=1) _Settings
 
-        h4 vehicles
+        h4(v-translate=1) Language
+        div
+            button.language(:class="langButtonClass('de')" @click="setLang('de')") de
+            button.language(:class="langButtonClass('en')" @click="setLang('en')") en
+
+        h4(v-translate=1) Vehicles
         div
             button(
                 v-for="vehicle of vehicleOrder"
@@ -14,9 +19,9 @@
                     :class="vehicle"
                 ) {{ vehicles[vehicle].ligature }}
 
-        h4 reset
-        p This will delete all stored data in you browser.
-        button(@click="clearData") clear data
+        h4(v-translate=1) Reset
+        p(v-translate=1) This will delete all data this app stored in your browser.
+        button(@click="clearData" v-translate=1) clear data
 </template>
 
 <script>
@@ -53,6 +58,26 @@
             clearData() {
                 this.$store.commit('clearStorage');
             },
+            langButtonClass(lang) {
+                if (lang === this.$translate.lang) return 'button-primary';
+                return 'ignored';
+            },
+            setLang(lang) {
+                this.$translate.setLang(lang);
+            },
+        },
+        locales: {
+            en: {
+                // most strings did not need to be added here as the key usually equals
+                // the translation in english
+            },
+            de: {
+                'clear data': 'Daten löschen',
+                'This will delete all data this app stored in your browser.': 'Das wird alle Daten löschen, die diese App in Ihrem Browser gespeichert hat.',
+                Language: 'Sprache',
+                Reset: 'Zurücksetzen',
+                Vehicles: 'Transportmittel',
+            },
         },
     };
 </script>
@@ -60,10 +85,15 @@
 <style lang="scss" scoped>
     @import "~@/assets/scss/variables.scss";
 
-    button.vehicle {
+    h4 {
+        font-size: 1.4em;
+        border-bottom: 1px solid #ddd;
+        margin-top: 1em;
+    }
+
+    button.vehicle, button.language {
         padding: 2px !important;
         margin-right: 2px !important;
-        color: #e0e0e0;
 
         &.chosen {
             @each $vehicle in tram, citybus, intercitybus, suburbanrailway, train, cableway, ferry, hailedsharedtaxi {
@@ -77,6 +107,7 @@
             }
         }
         &.ignored {
+            color: #e0e0e0;
         }
     }
 

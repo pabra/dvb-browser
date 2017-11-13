@@ -17,6 +17,7 @@
     "skeleton-scss": "^2.0.4",
     "vue": "^2.4.2",
     "vue-router": "^2.7.0",
+    "vue-translate-plugin": "^1.2.0",
     "vuex": "^2.4.1",
     "webpack-visualizer-plugin": "^0.1.11"
   },
