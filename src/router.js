@@ -1,7 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
-import Index from '@/components/Index';
 import Stations from '@/components/Stations';
 import Departure from '@/components/Departure';
 import About from '@/components/About';
@@ -13,8 +12,7 @@ export default new Router({
     routes: [
         {
             path: '/',
-            name: Index.name,
-            component: Index,
+            redirect: { name: Stations.name },
         },
         {
             path: '/stations',
