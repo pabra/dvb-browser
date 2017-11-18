@@ -111,6 +111,7 @@
                     position: absolute;
                     top: 0;
                     left: 10px;
+                    max-width: 89%;
                     background-color: #fff;
                     border: 1px solid #999;
                     border-radius: 5px;
