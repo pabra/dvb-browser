@@ -1,12 +1,30 @@
-# dvb-browser
+DVB Browser
+===========
 
-> A Vue.js project
+Search for stations and see departures for each station of DVB (Dresdner Verkehrsbetriebe)
+and VVO (Verkehrsverbund Oberelbe).
 
-## Build Setup
+I created this repository because:
+* DVB/VVO app is badly usable/slow
+* [Öffi] is great/fast but no realtime data for Dresden
+* [dvbjs] becomes too big for a browser app using mobile network
+* searched for a project to play with [Vue.js]
 
-``` bash
+There is always the current master version running at [https://dvb.peppnet.de]().
+
+Please do not use this app/service if accurate data is absolutely
+important to you. This is all pretty beta currently.
+
+
+Build Setup
+-----------
+
+```bash
 # install dependencies
 npm install
+
+# you can also use yarn
+yarn install
 
 # serve with hot reload at localhost:8080
 npm run dev
@@ -18,42 +36,17 @@ npm run build
 npm run build --report
 ```
 
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
-
-
-docker
-------
-
-```bash
-# build using docker
-docker run \
-    --rm \
-    -it \
-    -v $(pwd):/data \
-    -u $(id -u):$(id -g) \
-    -w /data \
-    -e HOME=/data \
-    node:8-alpine \
-    /bin/sh -c 'npm install && npm run build'
-
-# run dev server using docker
-docker run \
-    --rm \
-    -it \
-    -v $(pwd):/data \
-    -u $(id -u):$(id -g) \
-    -w /data \
-    -e HOME=/data \
-    -p 8008:8008 \
-    --name webpack-dev \
-    node:8-alpine \
-    /bin/sh -c 'npm install && npm run dev'
-```
-
 
 credits
 -------
 
-The part that communicates with DVB/VVO API is taken from [@kiliankoe](https://github.com/kiliankoe)'s
-repositories [dvbjs](https://github.com/kiliankoe/dvbjs) and [vvo](https://github.com/kiliankoe/vvo)
+The part that communicates with DVB/VVO API is taken from [@kiliankoe]'s
+repositories [dvbjs] and [vvo]
 and made suitable for a single page application in your browser.
+
+
+[Öffi]: https://oeffi.schildbach.de/
+[Vue.js]: https://vuejs.org/
+[@kiliankoe]: https://github.com/kiliankoe
+[dvbjs]: https://github.com/kiliankoe/dvbjs
+[vvo]: https://github.com/kiliankoe/vvo
