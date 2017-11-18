@@ -5,7 +5,7 @@
         LabeledInput(
             v-model.trim="findStation"
             label="find Station:"
-            :debounce=1000
+            :debounce=500
         )
 
         table.u-full-width(v-if="foundStations.length")
