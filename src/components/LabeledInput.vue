@@ -9,6 +9,7 @@
             :readonly="readonly"
             :disabled="disabled"
             v-model.trim="localValue"
+            @keyup.enter="emitInput"
             />
         <input v-if="type==='url'"
             ref="valueEl"
@@ -54,9 +55,10 @@
                 // we need to define the debouncer function here in data to have
                 // access to this.debounce prop(erty)
                 debouncer: _.debounce(
-                    value => this.$emit('input', value),
+                    this.emitInput,
                     this.debounce,
                 ),
+                localValue: this.value,
             };
         },
         props: {
@@ -103,16 +105,6 @@
             },
         },
         computed: {
-            localValue: {
-                get() { return this.value; },
-                set(value) {
-                    if (this.debounce) {
-                        this.debouncer(value);
-                    } else {
-                        this.$emit('input', value);
-                    }
-                },
-            },
             labelClass() {
                 return Object.assign(
                     {},
@@ -129,9 +121,16 @@
                     el.style.height = `${el.scrollHeight + 2}px`;
                 }
             },
+            emitInput() {
+                this.$emit('input', this.localValue);
+            },
         },
         watch: {
             value() { this.$nextTick(() => { this.autoHeight(); }); },
+            localValue() {
+                if (this.debounce) this.debouncer();
+                else this.emitInput();
+            },
         },
     };
 </script>
