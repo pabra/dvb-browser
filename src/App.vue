@@ -4,7 +4,7 @@
             template(v-for="entry in linkedComponents")
                 router-link.button(
                     :to="{name: entry.component.name }"
-                    active-class="button-primary"
+                    :class="isActive(entry.component)"
                 ) {{ t(entry.localeKey) }}
 
             a.button.ligature(
@@ -42,9 +42,25 @@
             onClickSettings() {
                 this.showSettings = !this.showSettings;
             },
+            isActive(component) {
+                if (component.name === this.$route.name) return ['button-primary'];
+                return [];
+            },
+            setLang(lang) {
+                this.$translate.setLang(lang);
+                document.querySelector('html').setAttribute('lang', lang);
+            },
         },
         created() {
-            let lang = localStorage.getItem('language');
+            let lang;
+            let storeLang = false;
+
+            if (this.$route.params.lang) {
+                lang = this.$route.params.lang;
+                storeLang = true;
+            } else {
+                lang = localStorage.getItem('language');
+            }
 
             if (['de', 'en'].indexOf(lang) === -1) {
                 if ('languages' in window.navigator && isArray(window.navigator.languages) && window.navigator.languages.length > 0) {
@@ -58,7 +74,9 @@
 
             if (lang !== 'de') lang = 'en';
 
-            this.$translate.setLang(lang);
+            this.setLang(lang);
+
+            if (storeLang) localStorage.setItem('language', lang);
 
             this.$translate.$on('language:changed', (language) => {
                 localStorage.setItem('language', language);
@@ -66,6 +84,11 @@
         },
         components: {
             Settings,
+        },
+        watch: {
+            $route(to) {
+                if (to.params.lang) this.setLang(to.params.lang);
+            },
         },
     };
 </script>

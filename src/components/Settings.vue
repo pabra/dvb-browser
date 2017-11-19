@@ -4,8 +4,14 @@
 
         h4(v-translate=1) Language
         div
-            button.language(:class="langButtonClass('de')" @click="setLang('de')") de
-            button.language(:class="langButtonClass('en')" @click="setLang('en')") en
+            router-link.button.language(
+                :to="{ params: { lang: 'de' }}"
+                :class="langButtonClass('de')"
+            ) de
+            router-link.button.language(
+                :to="{ params: { lang: 'en' }}"
+                :class="langButtonClass('en')"
+            ) en
 
         h4(v-translate=1) Vehicles
         div
@@ -61,9 +67,6 @@
             langButtonClass(lang) {
                 if (lang === this.$translate.lang) return 'button-primary';
                 return 'ignored';
-            },
-            setLang(lang) {
-                this.$translate.setLang(lang);
             },
         },
         locales: {

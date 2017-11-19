@@ -7,6 +7,21 @@ import About from '@/components/About';
 
 Vue.use(Router);
 
+function getLang(route) {
+    let lang = null;
+
+    if (route.params.lang) {
+        if (route.params.lang === 'de') lang = 'de';
+        else lang = 'en';
+    }
+
+    return { lang };
+}
+
+function getLangGetter() {
+    return getLang;
+}
+
 export default new Router({
     mode: 'history',
     routes: [
@@ -15,20 +30,27 @@ export default new Router({
             redirect: { name: Stations.name },
         },
         {
-            path: '/stations',
+            path: '/:lang?/stations',
             name: Stations.name,
             component: Stations,
+            props: getLangGetter,
         },
         {
-            path: '/departure/:stationId',
+            path: '/:lang?/departure/:stationId',
             name: Departure.name,
             component: Departure,
-            props(route) { return { stationId: parseInt(route.params.stationId, 10) }; },
+            props(route) {
+                return {
+                    stationId: parseInt(route.params.stationId, 10),
+                    ...getLangGetter()(route),
+                };
+            },
         },
         {
-            path: '/about',
+            path: '/:lang?/about',
             name: About.name,
             component: About,
+            props: getLangGetter,
         },
     ],
 });
