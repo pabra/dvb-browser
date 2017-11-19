@@ -2,9 +2,8 @@
     div#app
         nav.container
             template(v-for="entry in linkedComponents")
-                router-link(
+                router-link.button(
                     :to="{name: entry.component.name }"
-                    class="button"
                     active-class="button-primary"
                 ) {{ t(entry.localeKey) }}
 
@@ -97,12 +96,12 @@
             }
 
             main {
-                button {
+                button, .button {
                     height: 30px;
-                    line-height: 30px;
-                    padding: 0 15px;
+                    line-height: 26px;
+                    padding: 0 2px;
                     margin: 0;
-                    font-size: 20px;
+                    min-width: 30px;
                 }
 
                 #settings {
