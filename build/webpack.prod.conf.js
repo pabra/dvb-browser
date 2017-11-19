@@ -97,7 +97,7 @@ var webpackConfig = merge(baseWebpackConfig, {
             // Absolute path to compiled SPA
             path.join(__dirname, '../dist'),
             // List of routes to prerender
-            ['/', '/about'],
+            ['/', '/en/about', '/de/about', '/about'],
         ),
         new Visualizer({ filename: './stats.html' }),
     ]

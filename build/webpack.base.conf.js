@@ -25,7 +25,8 @@ module.exports = {
         }
     },
     module: {
-        rules: [{
+        rules: [
+            {
                 test: /\.(js|vue)$/,
                 loader: 'eslint-loader',
                 enforce: 'pre',
@@ -38,6 +39,20 @@ module.exports = {
                 test: /\.vue$/,
                 loader: 'vue-loader',
                 options: vueLoaderConfig
+            },
+            {
+                test: /\.md$/,
+                use: [
+                    {
+                        loader: 'html-loader',
+                    },
+                    {
+                        loader: 'markdown-loader',
+                        options: {
+                            /* your options here */
+                        },
+                    },
+                ],
             },
             {
                 test: /\.js$/,
