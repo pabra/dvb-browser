@@ -1,12 +1,15 @@
 <template lang="pug">
     div
-        h1 Departure
+        //- Because departure times are updated every second, for some reason translations
+        //- done with v-translate are also updated every second. At least in my Chromium
+        //- browser that's the case. I expect this to be an unnecessary performance issue
+        //- specially on mobile devices.
+        h1 {{ t('_Departures') }}
 
         p.station-name {{ apiData.city }}, {{ apiData.stop }} ({{ stationId }})
 
         button(
             class="reload"
-            title="reload departures"
             :class="{loading}"
             :disabled="loading"
             @click="onReloadClicked"
@@ -18,9 +21,9 @@
         table.u-full-width
             thead
                 tr
-                    th(colspan="2") line
-                    th(class="direction") direction
-                    th(colspan="2") time
+                    th(colspan="2") {{ t('line') }}
+                    th(class="direction") {{ t('direction') }}
+                    th(colspan="2") {{ t('time') }}
             tbody
                 tr(
                     v-for="d in departureTable"
@@ -240,6 +243,17 @@
         },
         components: {
             Stations,
+        },
+        locales: {
+            en: {
+                // most strings did not need to be added here as the key usually equals
+                // the translation in english
+            },
+            de: {
+                direction: 'Richtung',
+                line: 'Linie',
+                time: 'Zeit',
+            },
         },
     };
 </script>
