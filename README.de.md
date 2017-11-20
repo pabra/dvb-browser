@@ -10,29 +10,29 @@ Ich habe dieses Repository erstellt weil:
 * [dvbjs] zu groß für eine Browser-App über mobiles Internet wird
 * ich nach einem Projekt gesucht hab, um mit [Vue.js] zu spielen
 
-There is always the current master version running at [https://dvb.peppnet.de]().
+Die kompilierte und gepackte aktuelle Version kann auf [dvb.peppnet.de](https://dvb.peppnet.de)
+abgerufen werden. Der Quellcode liegt auf [github](https://github.com/pabra/dvb-browser).
 
-Please do not use this app/service if accurate data is absolutely
-important to you. This is all pretty beta currently.
-
+Wer auf akkurate und verlässliche Daten angewiesen sollte diese App vorsichtshalber
+nicht benutzen. Das ist alles noch ziemlich beta.
 
 Build Setup
 -----------
 
 ```bash
-# install dependencies
+# Abhängigkeiten installieren
 npm install
 
-# you can also use yarn
+# yarn geht auch
 yarn install
 
-# serve with hot reload at localhost:8080
+# dev server starten auf localhost:8080
 npm run dev
 
-# build for production with minification
+# für Produktion bauen
 npm run build
 
-# build for production and view the bundle analyzer report
+# für Produktion bauen und bundle analyzer ansehen
 npm run build --report
 ```
 
@@ -40,9 +40,9 @@ npm run build --report
 credits
 -------
 
-The part that communicates with DVB/VVO API is taken from [@kiliankoe]'s
-repositories [dvbjs] and [vvo]
-and made suitable for a single page application in your browser.
+Der Teil zur Kommunikation mit der DVB/VVO API ist von [@kiliankoe]'s
+Repositories [dvbjs] und [vvo] entnommen und für den Einsatz als Single Page
+Application im Browser optimiert.
 
 
 [Öffi]: https://oeffi.schildbach.de/

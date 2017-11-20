@@ -10,7 +10,8 @@ I created this repository because:
 * [dvbjs] becomes too big for a browser app using mobile network
 * searched for a project to play with [Vue.js]
 
-There is always the current master version running at [https://dvb.peppnet.de]().
+The compiled and packed current version can be accessed at [dvb.peppnet.de](https://dvb.peppnet.de).
+The source code can be found on [github](https://github.com/pabra/dvb-browser).
 
 Please do not use this app/service if accurate data is absolutely
 important to you. This is all pretty beta currently.
