@@ -4,14 +4,14 @@
 
         LabeledInput(
             v-model.trim="findStation"
-            label="find Station:"
+            :label="t('find station') + ':'"
             :debounce=500
         )
 
         table.u-full-width(v-if="foundStations.length")
             thead
                 tr
-                    th(colspan="2") found stations
+                    th(colspan="2" v-translate=1) found stations
 
             transition-group(name="list" tag="tbody")
                 tr(v-for="station in foundStations" :key="station.id")
@@ -19,13 +19,13 @@
                         a(href="#" @click.prevent="showDeparture(station)")
                             | {{ station.city }}, {{ station.stop }}
                     td
-                        button.favorites.add(title="add to favorites" @click="addStation(station)")
+                        button.favorites.add(@click="addStation(station)")
                             i.material-icons
 
         table.u-full-width(v-if="sortedFavoriteStations.length")
             thead
                 tr
-                    th(colspan="2") favorite stations
+                    th(colspan="2" v-translate=1) favorite stations
 
             transition-group(name="list" tag="tbody")
                 tr(
@@ -37,7 +37,7 @@
                         a(href="#" @click.prevent="showDeparture(station)")
                             | {{ station.city }}, {{ station.stop }}
                     td
-                        button.favorites.remove(title="remove from favorites" @click="removeStation(station)")
+                        button.favorites.remove(@click="removeStation(station)")
                             i.material-icons
 </template>
 
@@ -98,6 +98,17 @@
         },
         components: {
             LabeledInput,
+        },
+        locales: {
+            en: {
+                // most strings did not need to be added here as the key usually equals
+                // the translation in english
+            },
+            de: {
+                'favorite stations': 'favorisierte Haltestellen',
+                'find station': 'Haltestelle finden',
+                'found stations': 'gefundene Haltestellen',
+            },
         },
     };
 </script>
