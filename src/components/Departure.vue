@@ -11,7 +11,7 @@
             :disabled="loading"
             @click="onReloadClicked"
         )
-            div.text &#8635;
+            i.material-icons autorenew
 
         pre(v-if="!apiData.status || !apiData.status.Code || apiData.status.Code !== 'Ok'") {{ apiData.status }}
 
@@ -276,12 +276,18 @@
         font-weight: bold;
     }
 
-    button.reload.loading {
-        .text {
-            animation-name: spin;
-            animation-duration: 1s;
-            animation-iteration-count: infinite;
-            animation-timing-function: linear;
+    button.reload {
+        i {
+            font-size: 26px;
+        }
+
+        &.loading {
+            i {
+                animation-name: spin;
+                animation-duration: 1s;
+                animation-iteration-count: infinite;
+                animation-timing-function: linear;
+            }
         }
     }
 
