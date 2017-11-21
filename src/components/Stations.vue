@@ -19,7 +19,7 @@
                         a(href="#" @click.prevent="showDeparture(station)")
                             | {{ station.city }}, {{ station.stop }}
                     td
-                        button.favorites.add(@click="addStation(station)")
+                        button.favorites.add(@click="addStation(station)" :class="{added: isFavorite(station)}")
                             i.material-icons
 
         table.u-full-width(v-if="sortedFavoriteStations.length")
@@ -79,6 +79,9 @@
                     name: Departure.name,
                     params: { stationId: parseInt(station.id, 10) },
                 });
+            },
+            isFavorite(station) {
+                return !!this.sortedFavoriteStations.find(s => s.id === station.id);
             },
         },
         watch: {
@@ -163,7 +166,7 @@
                         content: 'star_border';
                     }
 
-                    &:hover {
+                    &.added {
                         i::before {
                             content: 'star';
                         }
