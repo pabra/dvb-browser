@@ -65,16 +65,13 @@
                 setTimeout(() => { this.hightlightStations.shift(); }, 200);
             },
             addStation(station) {
-                window.console.log('station', station);
                 this.$store.commit('addStation', station);
                 this.highlight(station);
             },
             removeStation(station) {
-                window.console.log('station', station);
                 this.$store.commit('removeStation', station);
             },
             showDeparture(station) {
-                window.console.log('station', station);
                 this.$router.push({
                     name: Departure.name,
                     params: { stationId: parseInt(station.id, 10) },

@@ -47,7 +47,6 @@
         },
         methods: {
             toggleVehicle(vehicle) {
-                window.console.log('vehicle', vehicle);
                 if (this.chosenVehicles.indexOf(vehicle) > -1) {
                     this.$store.commit('removeVehicle', vehicle);
                 } else {
