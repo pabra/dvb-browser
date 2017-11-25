@@ -56,7 +56,7 @@
                     ) {{ d.direction }}
 
                     td.delay {{ d.delayTimeStr }}
-                    td.time {{ d.arrivalTimeRelative }}
+                    td.time(:class="{arrivalIsNear: d.arrivalIsNear}") {{ d.arrivalTimeRelative }}
 </template>
 
 <script>
@@ -134,7 +134,9 @@
                         else if (d.delayTime < 0) d.delayTimeStr = `-${d.delayTime}`;
                         else d.delayTimeStr = '';
 
-                        d.arrivalTimeRelative = this.formatDateDiff(d.arrivalTime - this.now);
+                        d.arrivalTimeRelativeInt = d.arrivalTime - this.now;
+                        d.arrivalTimeRelative = this.formatDateDiff(d.arrivalTimeRelativeInt);
+                        d.arrivalIsNear = d.arrivalTimeRelativeInt <= 5 * 60 * 1000;
 
                         if (d.mode.name !== vehiclePrev) {
                             d.departuresPerVehicle = self.reduce(
@@ -282,6 +284,10 @@
         &.time {
             text-align: right;
             white-space: nowrap;
+
+            &.arrivalIsNear {
+                font-weight: bold;
+            }
         }
     }
 
