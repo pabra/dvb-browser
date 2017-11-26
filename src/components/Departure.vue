@@ -132,8 +132,8 @@
                     })
                     .map((d, idx, self) => {
                         /* eslint-disable no-param-reassign */
-                        if (d.delayTime > 0) d.delayTimeStr = `+${d.delayTime}`;
-                        else if (d.delayTime < 0) d.delayTimeStr = `-${d.delayTime}`;
+                        if (d.delayTime > 0) d.delayTimeStr = `+${d.delayTime}′`;
+                        else if (d.delayTime < 0) d.delayTimeStr = `-${d.delayTime}′`;
                         else d.delayTimeStr = '';
 
                         d.arrivalTimeRelativeInt = d.arrivalTime - this.now;
@@ -228,6 +228,7 @@
             },
             onReloadClicked() {
                 this.pageLoaded = new Date();
+                this.reloadWaitClassName = 'reload-wait-60s';
                 this.getData();
             },
         },
