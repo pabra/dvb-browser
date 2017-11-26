@@ -26,7 +26,7 @@ npm install
 # yarn geht auch
 yarn install
 
-# dev server starten auf localhost:8080
+# dev server starten auf localhost:8008
 npm run dev
 
 # für Produktion bauen
