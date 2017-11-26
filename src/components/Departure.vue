@@ -10,7 +10,7 @@
 
         button(
             class="reload"
-            :class="{loading}"
+            :class="reloadButtonClassNames"
             :disabled="loading"
             @click="onReloadClicked"
         )
@@ -76,6 +76,7 @@
                 pageLoaded: new Date(),
                 intervalRef: null,
                 loading: false,
+                reloadWaitClassName: 'reload-wait-60s',
                 apiData: {},
                 apiCalled: null,
             };
@@ -182,6 +183,10 @@
                         return d;
                     });
             },
+            reloadButtonClassNames() {
+                if (this.loading) return ['loading'];
+                return [this.reloadWaitClassName];
+            },
         },
         methods: {
             async getData() {
@@ -229,15 +234,18 @@
         created() {
             this.getData();
             this.intervalRef = setInterval(() => {
-                const now = new Date();
                 if (this.loading) return;
 
+                const now = new Date();
                 const minute = 60 * 1000;
-                if (now - this.pageLoaded > 60 * minute && now - this.apiCalled > 10 * minute) {
-                    this.getData();
-                } else if (now - this.pageLoaded > 10 * minute && now - this.apiCalled > 5 * minute) {
-                    this.getData();
+                if (now - this.pageLoaded > 60 * minute) {
+                    this.reloadWaitClassName = `reload-wait-${60 * 60}s`;
+                    if (now - this.apiCalled > 10 * minute) this.getData();
+                } else if (now - this.pageLoaded > 10 * minute) {
+                    this.reloadWaitClassName = `reload-wait-${10 * 60}s`;
+                    if (now - this.apiCalled > 5 * minute) this.getData();
                 } else if (now - this.apiCalled > minute) {
+                    this.reloadWaitClassName = 'reload-wait-60s';
                     this.getData();
                 } else {
                     this.now = now;
@@ -305,6 +313,11 @@
     button.reload {
         i {
             font-size: 26px;
+            // use -webkit prefixes here so IE11 ignores it (can't handle it)
+            // all other major browsers (even edge) can deal with the prefix
+            background-image: -webkit-linear-gradient(135deg, $main-color 0%,$main-color-darker 50%,$main-color-lighter 51%,$main-color 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         &.loading {
@@ -315,14 +328,35 @@
                 animation-timing-function: linear;
             }
         }
+
+        $wait-times: 60s, 10 * 60s, 60 * 60s;
+        @each $i in $wait-times {
+            &.reload-wait-#{$i} {
+                i {
+                    animation-name: spin-back;
+                    animation-duration: $i;
+                    animation-iteration-count: 1;
+                    animation-timing-function: linear;
+                }
+            }
+        }
     }
 
     @keyframes spin {
         from {
-            transform:rotate(0deg);
+            transform: rotate(0deg);
         }
         to {
-            transform:rotate(360deg);
+            transform: rotate(360deg);
+        }
+    }
+
+    @keyframes spin-back {
+        from {
+            transform: rotate(360deg);
+        }
+        to {
+            transform: rotate(0deg);
         }
     }
 
