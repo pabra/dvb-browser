@@ -72,6 +72,7 @@
             en: {
                 // most strings did not need to be added here as the key usually equals
                 // the translation in english
+                Vehicles: 'Means of transport',
             },
             de: {
                 'clear data': 'Daten löschen',
