@@ -315,7 +315,7 @@
             font-size: 26px;
             // use -webkit prefixes here so IE11 ignores it (can't handle it)
             // all other major browsers (even edge) can deal with the prefix
-            background-image: -webkit-linear-gradient(135deg, $main-color 0%,$main-color-darker 50%,$main-color-lighter 51%,$main-color 100%);
+            background-image: -webkit-linear-gradient(315deg, $main-color 0%,$main-color-darker 50%,$main-color-lighter 51%,$main-color 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
