@@ -24,7 +24,7 @@
     import Stations from '@/components/Stations';
     import About from '@/components/About';
     import Settings from '@/components/Settings';
-    import { isArray } from '@/lib/utils';
+    import { isArray, isObject } from '@/lib/utils';
 
     export default {
         name: 'app',
@@ -49,6 +49,26 @@
             setLang(lang) {
                 this.$translate.setLang(lang);
                 document.querySelector('html').setAttribute('lang', lang);
+            },
+            setHrefLang(route) {
+                const langDefault = document.querySelector('link[hreflang=x-default]');
+                const langDe = document.querySelector('link[hreflang=de]');
+                const langEn = document.querySelector('link[hreflang=en]');
+                const routeDefault = this.$router.resolve({
+                    name: route.name,
+                    params: Object.assign({}, route.params, { lang: undefined }),
+                });
+                const routeDe = this.$router.resolve({
+                    name: route.name,
+                    params: Object.assign({}, route.params, { lang: 'de' }),
+                });
+                const routeEn = this.$router.resolve({
+                    name: route.name,
+                    params: Object.assign({}, route.params, { lang: 'en' }),
+                });
+                langDefault.href = isObject(routeDefault) ? routeDefault.href : '';
+                langDe.href = isObject(routeDe) ? routeDe.href : '';
+                langEn.href = isObject(routeEn) ? routeEn.href : '';
             },
         },
         created() {
@@ -81,6 +101,7 @@
             this.$translate.$on('language:changed', (language) => {
                 localStorage.setItem('language', language);
             });
+            this.setHrefLang(this.$route);
         },
         components: {
             Settings,
@@ -88,6 +109,7 @@
         watch: {
             $route(to) {
                 if (to.params.lang) this.setLang(to.params.lang);
+                this.setHrefLang(to);
             },
         },
     };
