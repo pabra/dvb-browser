@@ -188,7 +188,13 @@
                 if (this.loading) return;
                 // if (!this.stationId || 1) return;
                 this.loading = true;
-                const res = await fetchDeparture(this.stationId);
+                let res;
+                try {
+                    res = await fetchDeparture(this.stationId);
+                } catch (err) {
+                    window.console.error(err);
+                    res = {};
+                }
                 this.apiData = res;
                 this.apiCalled = new Date();
                 this.loading = false;
