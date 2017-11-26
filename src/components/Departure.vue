@@ -53,10 +53,11 @@
                     td.direction(
                         v-if="d.departuresPerDirection"
                         :rowspan="d.departuresPerDirection"
+                        :class="{arrivalIsSoon: d.arrivalIsSoon}"
                     ) {{ d.direction }}
 
-                    td.delay {{ d.delayTimeStr }}
-                    td.time(:class="{arrivalIsNear: d.arrivalIsNear}") {{ d.arrivalTimeRelative }}
+                    td.delay(:class="{arrivalIsSoon: d.arrivalIsSoon}") {{ d.delayTimeStr }}
+                    td.time(:class="{arrivalIsSoon: d.arrivalIsSoon}") {{ d.arrivalTimeRelative }}
 </template>
 
 <script>
@@ -136,7 +137,7 @@
 
                         d.arrivalTimeRelativeInt = d.arrivalTime - this.now;
                         d.arrivalTimeRelative = this.formatDateDiff(d.arrivalTimeRelativeInt);
-                        d.arrivalIsNear = d.arrivalTimeRelativeInt <= 5 * 60 * 1000;
+                        d.arrivalIsSoon = d.arrivalTimeRelativeInt <= 5 * 60 * 1000;
 
                         if (d.mode.name !== vehiclePrev) {
                             d.departuresPerVehicle = self.reduce(
@@ -290,10 +291,10 @@
         &.time {
             text-align: right;
             white-space: nowrap;
+        }
 
-            &.arrivalIsNear {
-                font-weight: bold;
-            }
+        &.arrivalIsSoon {
+            font-weight: bold;
         }
     }
 
@@ -354,6 +355,9 @@
                 }
                 td.vehicle, td.line {
                     background-color: $line-bg-color;
+                }
+                td.arrivalIsSoon {
+                    text-shadow: 0 0 15px $vehicle-color;
                 }
             }
 
