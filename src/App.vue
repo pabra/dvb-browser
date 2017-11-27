@@ -9,21 +9,26 @@
 
             a.button.ligature(
                 :title="t('_Settings')"
-                :class="{'button-primary': showSettings}"
+                :class="{'button-primary': showOverlay === Settings}"
                 @click="onClickSettings"
             )
                 i.material-icons settings
 
         main.container
             router-view
-            transition(name="settings")
-                Settings#settings(v-show="showSettings")
+            Overlay(
+                v-if="!isNull(showOverlay)"
+                :component="showOverlay"
+                @destroy="onOverlayDestroy"
+            )
 </template>
 
 <script>
+    import _ from 'lodash';
     import Stations from '@/components/Stations';
     import About from '@/components/About';
     import Settings from '@/components/Settings';
+    import Overlay from '@/components/Overlay';
     import { isArray, isObject } from '@/lib/utils';
 
     export default {
@@ -35,12 +40,14 @@
                     { component: About, localeKey: '_About' },
                 ],
                 loading: false,
-                showSettings: false,
+                showOverlay: null,
+                isNull: _.isNull,
+                Settings,
             };
         },
         methods: {
             onClickSettings() {
-                this.showSettings = !this.showSettings;
+                this.showOverlay = _.isNull(this.showOverlay) ? this.showOverlay = Settings : null;
             },
             isActive(component) {
                 if (component.name === this.$route.name) return ['button-primary'];
@@ -69,6 +76,9 @@
                 langDefault.href = isObject(routeDefault) ? routeDefault.href : '';
                 langDe.href = isObject(routeDe) ? routeDe.href : '';
                 langEn.href = isObject(routeEn) ? routeEn.href : '';
+            },
+            onOverlayDestroy() {
+                this.showOverlay = null;
             },
         },
         created() {
@@ -105,6 +115,7 @@
         },
         components: {
             Settings,
+            Overlay,
         },
         watch: {
             $route(to) {
@@ -147,23 +158,6 @@
                     padding: 0 2px;
                     margin: 0;
                     min-width: 30px;
-                }
-
-                #settings {
-                    box-shadow: 0 0 200px -30px black;
-                    padding: 10px;
-                    position: absolute;
-                    top: 0;
-                    left: 10px;
-                    max-width: 89%;
-                    background-color: #fff;
-                    border: 1px solid #999;
-                    border-radius: 5px;
-                }
-
-                .settings-enter, .settings-leave-active {
-                    opacity: 0;
-                    top: -200px !important;
                 }
             }
         }
