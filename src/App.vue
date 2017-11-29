@@ -73,9 +73,9 @@
                     name: route.name,
                     params: Object.assign({}, route.params, { lang: 'en' }),
                 });
-                langDefault.href = isObject(routeDefault) ? routeDefault.href : '';
-                langDe.href = isObject(routeDe) ? routeDe.href : '';
-                langEn.href = isObject(routeEn) ? routeEn.href : '';
+                langDefault.href = isObject(routeDefault) ? `${routeDefault.href}/` : '';
+                langDe.href = isObject(routeDe) ? `${routeDe.href}/` : '';
+                langEn.href = isObject(routeEn) ? `${routeEn.href}/` : '';
             },
             onOverlayDestroy() {
                 this.showOverlay = null;
