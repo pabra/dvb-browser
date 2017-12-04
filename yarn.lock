@@ -3644,6 +3644,10 @@ lcid@^1.0.0:
   dependencies:
     invert-kv "^1.0.0"
 
+leaflet@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/leaflet/-/leaflet-1.2.0.tgz#fd5d93d9cb00091f5f8a69206d0d6744c1c82697"
+
 levn@^0.3.0, levn@~0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/levn/-/levn-0.3.0.tgz#3b09924edf9f083c0490fdd4c0bc4421e04764ee"
@@ -6244,9 +6248,20 @@ vue-translate-plugin@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/vue-translate-plugin/-/vue-translate-plugin-1.2.0.tgz#11dd2ccf881196beac18929b59c6d3e9393daa40"
 
+vue2-leaflet@^0.0.57:
+  version "0.0.57"
+  resolved "https://registry.yarnpkg.com/vue2-leaflet/-/vue2-leaflet-0.0.57.tgz#fa0788cfb738bf466a463584ec827c96701b9637"
+  dependencies:
+    leaflet "^1.2.0"
+    vue "^2.5.3"
+
 vue@^2.4.2:
   version "2.5.3"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.5.3.tgz#e1a3b1f49b6e93e574ce040b95cbc873912fecc1"
+
+vue@^2.5.3:
+  version "2.5.9"
+  resolved "https://registry.yarnpkg.com/vue/-/vue-2.5.9.tgz#b2380cd040915dca69881dafd121d760952e65f7"
 
 vuex@^2.4.1:
   version "2.5.0"

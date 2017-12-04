@@ -17,6 +17,8 @@ export default new Vuex.Store({
     state: {
         favoriteStations: getJsonStorage('favoriteStations', defaultStates.favoriteStations()),
         chosenVehicles: getJsonStorage('chosenVehicles', defaultStates.chosenVehicles()),
+        windowWidth: 0,
+        windowHeight: 0,
     },
     getters: {
         chosenMots(state) {
@@ -72,6 +74,12 @@ export default new Vuex.Store({
             localStorage.clear();
             state.favoriteStations = defaultStates.favoriteStations();
             state.chosenVehicles = defaultStates.chosenVehicles();
+        },
+        setWindowWidth(state, width) {
+            state.windowWidth = width;
+        },
+        setWindowHeight(state, height) {
+            state.windowHeight = height;
         },
     },
 });

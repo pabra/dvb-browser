@@ -15,10 +15,11 @@
                 i.material-icons settings
 
         main.container
-            router-view
+            router-view(@onShowOverlay="args => onShowOverlay(args.component, args.props)")
             Overlay(
                 v-if="!isNull(showOverlay)"
                 :component="showOverlay"
+                :props="overlayProps"
                 @destroy="onOverlayDestroy"
             )
 </template>
@@ -41,6 +42,7 @@
                 ],
                 loading: false,
                 showOverlay: null,
+                overlayProps: null,
                 isNull: _.isNull,
                 Settings,
             };
@@ -80,6 +82,18 @@
             onOverlayDestroy() {
                 this.showOverlay = null;
             },
+            onShowOverlay(component, props = null) {
+                window.console.log('component', component);
+                window.console.log('props', props);
+                this.showOverlay = component;
+                this.overlayProps = props;
+            },
+            getWindowWidth() {
+                this.$store.commit('setWindowWidth', document.documentElement.clientWidth);
+            },
+            getWindowHeight() {
+                this.$store.commit('setWindowHeight', document.documentElement.clientHeight);
+            },
         },
         created() {
             let lang;
@@ -112,6 +126,19 @@
                 localStorage.setItem('language', language);
             });
             this.setHrefLang(this.$route);
+        },
+        mounted() {
+            this.$nextTick(function _fn() {
+                window.addEventListener('resize', _.throttle(this.getWindowWidth, 500));
+                window.addEventListener('resize', _.throttle(this.getWindowHeight, 500));
+
+                this.getWindowWidth();
+                this.getWindowHeight();
+            });
+        },
+        beforeDestroy() {
+            window.removeEventListener('resize', this.getWindowWidth);
+            window.removeEventListener('resize', this.getWindowHeight);
         },
         components: {
             Settings,

@@ -15,10 +15,14 @@
 
             transition-group(name="list" tag="tbody")
                 tr(v-for="station in foundStations" :key="station.id")
-                    td
+                    td.station
                         a(href="#" @click.prevent="showDeparture(station)")
                             | {{ station.city }}, {{ station.stop }}
-                    td
+                    td.buttons
+                        button.location(@click="showLocaton(station)")
+                            i.material-icons
+                                | location_on
+
                         button.favorites.add(@click="addStation(station)" :class="{added: isFavorite(station)}")
                             i.material-icons
 
@@ -33,10 +37,14 @@
                     :key="station.id"
                     :class="{highlight: hightlightStations.indexOf(station.id) !== -1}"
                 )
-                    td
+                    td.station
                         a(href="#" @click.prevent="showDeparture(station)")
                             | {{ station.city }}, {{ station.stop }}
-                    td
+                    td.buttons
+                        button.location(@click="showLocaton(station)")
+                            i.material-icons
+                                | location_on
+
                         button.favorites.remove(@click="removeStation(station)")
                             i.material-icons
 </template>
@@ -46,6 +54,7 @@
     import LabeledInput from '@/components/LabeledInput';
     import Departure from '@/components/Departure';
     import { fetchSations } from '@/lib/fetch';
+    import Leaflet from '@/components/Leaflet';
 
     export default {
         name: 'stations',
@@ -80,6 +89,17 @@
             isFavorite(station) {
                 return !!this.sortedFavoriteStations.find(s => s.id === station.id);
             },
+            showLocaton(station) {
+                window.console.log('station', station);
+                this.$emit('onShowOverlay', {
+                    component: Leaflet,
+                    props: {
+                        center: station.coords,
+                        marker: station.coords,
+                        zoom: 18,
+                    },
+                });
+            },
         },
         watch: {
             async findStation(value) {
@@ -98,6 +118,7 @@
         },
         components: {
             LabeledInput,
+            Leaflet,
         },
         locales: {
             en: {
@@ -141,31 +162,42 @@
             padding: 2px 0;
             transition-duration: 2s;
 
-            &:first-child {
+            &.station {
                 width: 100%;
             }
 
-            button.favorites {
-                &.remove {
-                    i::before {
-                        content: 'delete';
-                    }
+            &.buttons {
+                // width: 65px;
+                white-space: nowrap;
+            }
 
-                    &:hover {
-                        i::before {
-                            content: 'delete_forever';
-                        }
-                    }
+            button {
+                &.location {
+                    margin-right: 2px !important;
                 }
 
-                &.add {
-                    i::before {
-                        content: 'star_border';
+                &.favorites {
+                    &.remove {
+                        i::before {
+                            content: 'delete';
+                        }
+
+                        &:hover {
+                            i::before {
+                                content: 'delete_forever';
+                            }
+                        }
                     }
 
-                    &.added {
+                    &.add {
                         i::before {
-                            content: 'star';
+                            content: 'star_border';
+                        }
+
+                        &.added {
+                            i::before {
+                                content: 'star';
+                            }
                         }
                     }
                 }

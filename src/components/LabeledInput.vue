@@ -64,7 +64,7 @@
         props: {
             className: {
                 type: Object,
-                default: () => {},
+                default: () => ({}),
             },
             label: {
                 type: String,
