@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "node build/dev-server.js",
     "start": "npm run dev",
-    "build": "node build/build.js && gzip -c dist/stats.html > dist/stats.html.gz",
+    "build": "node build/build.js && ./compress-dist.sh",
     "lint": "eslint --ext .js,.vue src"
   },
   "dependencies": {
