@@ -149,7 +149,7 @@ export async function fetchDeparture(stationId, offset = 0, limit = 30) {
                     direction: d.Direction,
                     platform: d.Platform ?
                         { name: d.Platform.Name, type: d.Platform.Type } :
-                        undefined,
+                        {},
                     arrivalTimeRelative: Math.round((arrivalTime - now) / 1000 / 60),
                     scheduledTimeRelative: Math.round((scheduledTime - now) / 1000 / 60),
                     delayTime: Math.round((arrivalTime - scheduledTime) / 1000 / 60),
@@ -157,7 +157,7 @@ export async function fetchDeparture(stationId, offset = 0, limit = 30) {
                     mode: parseMot(d.Mot),
                     diva: d.Diva ?
                         { number: parseInt(d.Diva.Number, 10), network: d.Diva.Network } :
-                        undefined,
+                        {},
                 };
             }),
         };

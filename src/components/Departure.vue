@@ -22,7 +22,9 @@
             thead
                 tr
                     th(colspan="2") {{ t('line') }}
-                    th(class="direction") {{ t('direction') }}
+                    th.direction(colspan="2")
+                        span.platform(v-if="somePlatforms") {{ t('platform') + ' ' }}
+                        | {{ t('direction') }}
                     th(colspan="2") {{ t('time') }}
             tbody
                 tr(
@@ -30,14 +32,10 @@
                     :class="d.rowClass"
                 )
                     td.vehicle(
-                        v-if="d.departuresPerLine"
-                        :rowspan="d.departuresPerLine"
+                        v-if="d.nextSameLine"
+                        :rowspan="d.nextSameLine"
                         :title="`${d.mode.title}: ${d.line}`"
                     )
-                        //- img(
-                        //-     v-if="vehicles[d.mode.name.toLowerCase()]"
-                        //-     :src="vehicles[d.mode.name.toLowerCase()].icon_url"
-                        //- )
                         i(
                             v-if="vehicles[d.mode.name.toLowerCase()]"
                         ).material-icons
@@ -45,19 +43,23 @@
                         span.vehicle(v-else) {{ d.mode.name }}
 
                     td.line(
-                        v-if="d.departuresPerLine"
-                        :rowspan="d.departuresPerLine"
+                        v-if="d.nextSameLine"
+                        :rowspan="d.nextSameLine"
                         :title="`${d.mode.title}: ${d.line}`"
                     ) {{ d.line }}
 
+                    td.platform(
+                        v-if="d.nextSamePlatform"
+                        :rowspan="d.nextSamePlatform"
+                    ) {{ d.platform.name }}
+
                     td.direction(
-                        v-if="d.departuresPerDirection"
-                        :rowspan="d.departuresPerDirection"
-                        :class="{arrivalIsSoon: d.arrivalIsSoon}"
+                        v-if="d.nextSameDirection"
+                        :rowspan="d.nextSameDirection"
                     ) {{ d.direction }}
 
-                    td.delay(:class="{arrivalIsSoon: d.arrivalIsSoon}") {{ d.delayTimeStr }}
-                    td.time(:class="{arrivalIsSoon: d.arrivalIsSoon}") {{ d.arrivalTimeRelative }}
+                    td.delay {{ d.delayTimeStr }}
+                    td.time {{ d.arrivalTimeRelative }}
 </template>
 
 <script>
@@ -91,19 +93,32 @@
             departureTable() {
                 const tryInt = this.tryInt;
                 const departureCount = {};
-                let vehiclePrev = '';
-                let vehicleEvenOdd = '';
-                let linePrev = '';
-                let lineEvenOdd = '';
-                let directionPrev = '';
-                let directionEvenOdd = '';
-                let departureEvenOdd = '';
+                const getSchama = (obj, schema) => schema.map(s => _.get(obj, s)).join('\t');
+
+                const vehicleSchema = ['mode.name'];
+                let vehicleAccuStr = '';
+                let vehicleAccu;
+
+                const lineSchema = ['line'];
+                let lineAccuStr = '';
+                let lineAccu;
+
+                const platformSchema = ['line', 'platform.name'];
+                let platformAccuStr = '';
+                let platformAccu;
+
+                const directionSchema = ['line', 'platform.name', 'direction'];
+                let directionAccuStr = '';
+                let directionAccu;
 
                 if (!this.apiData.departures) return [];
                 return this.apiData.departures
                     .filter((d) => {
-                        // 3 departures per direction
-                        const key = `${d.line}_${d.direction}`;
+                        // 3 departures per platform or direction
+                        let key;
+                        if (d.platform.name) key = `${d.line}\t${d.platform.name}`;
+                        else key = `${d.line}\t${d.direction}`;
+
                         if (!(key in departureCount)) departureCount[key] = 0;
                         departureCount[key] += 1;
 
@@ -122,15 +137,20 @@
                         if (tryInt(a.line) < tryInt(b.line)) return -1;
                         if (tryInt(a.line) > tryInt(b.line)) return 1;
 
-                        if (a.direction < b.direction) return -1;
-                        if (a.direction > b.direction) return 1;
+                        if (a.platform.name && b.platform.name) {
+                            if (a.platform.name < b.platform.name) return -1;
+                            if (a.platform.name > b.platform.name) return 1;
+                        } else {
+                            if (a.direction < b.direction) return -1;
+                            if (a.direction > b.direction) return 1;
+                        }
 
                         if (a.arrivalTime < b.arrivalTime) return -1;
                         if (a.arrivalTime > b.arrivalTime) return 1;
 
                         return 0;
                     })
-                    .map((d, idx, self) => {
+                    .map((d) => {
                         /* eslint-disable no-param-reassign */
                         if (d.delayTime > 0) d.delayTimeStr = `+${d.delayTime}′`;
                         else if (d.delayTime < 0) d.delayTimeStr = `-${d.delayTime}′`;
@@ -138,50 +158,62 @@
 
                         d.arrivalTimeRelativeInt = d.arrivalTime - this.now;
                         d.arrivalTimeRelative = this.formatDateDiff(d.arrivalTimeRelativeInt);
-                        d.arrivalIsSoon = d.arrivalTimeRelativeInt <= 5 * 60 * 1000;
+                        const arrivalIsSoon = d.arrivalTimeRelativeInt <= 5 * 60 * 1000;
 
-                        if (d.mode.name !== vehiclePrev) {
-                            d.departuresPerVehicle = self.reduce(
-                                (sum, value) => (value.mode.name === d.mode.name ? sum + 1 : sum),
-                                0,
-                            );
-                            vehiclePrev = d.mode.name;
-                            vehicleEvenOdd = vehicleEvenOdd === 'even' ? 'odd' : 'even';
+                        const vehicleStr = getSchama(d, vehicleSchema);
+                        if (vehicleStr !== vehicleAccuStr) {
+                            vehicleAccuStr = vehicleStr;
+                            vehicleAccu = d;
+                            d.nextSameVehicle = 0;
                         }
+                        vehicleAccu.nextSameVehicle += 1;
 
-                        if (d.line !== linePrev) {
-                            d.departuresPerLine = self.reduce(
-                                (sum, value) => (value.line === d.line ? sum + 1 : sum),
-                                0,
-                            );
-                            linePrev = d.line;
-                            if (d.departuresPerVehicle) lineEvenOdd = 'even';
-                            else lineEvenOdd = lineEvenOdd === 'even' ? 'odd' : 'even';
+                        let newLine = false;
+                        const lineStr = getSchama(d, lineSchema);
+                        if (lineStr !== lineAccuStr) {
+                            newLine = true;
+                            lineAccuStr = lineStr;
+                            lineAccu = d;
+                            d.nextSameLine = 0;
                         }
+                        lineAccu.nextSameLine += 1;
 
-                        if (`${d.line}\t${d.direction}` !== directionPrev) {
-                            d.departuresPerDirection = self.reduce(
-                                (sum, value) => (`${value.line}\t${value.direction}` === `${d.line}\t${d.direction}` ? sum + 1 : sum),
-                                0,
-                            );
-                            directionPrev = `${d.line}\t${d.direction}`;
-                            if (d.departuresPerLine) directionEvenOdd = 'even';
-                            else directionEvenOdd = directionEvenOdd === 'even' ? 'odd' : 'even';
+                        let newPlatform = false;
+                        const platformStr = getSchama(d, platformSchema);
+                        if (platformStr !== platformAccuStr) {
+                            newPlatform = true;
+                            platformAccuStr = platformStr;
+                            platformAccu = d;
+                            d.nextSamePlatform = 0;
                         }
+                        platformAccu.nextSamePlatform += 1;
 
-                        if (d.departuresPerDirection) departureEvenOdd = 'even';
-                        else departureEvenOdd = departureEvenOdd === 'even' ? 'odd' : 'even';
+                        let newDirection = false;
+                        const directionStr = getSchama(d, directionSchema);
+                        if (directionStr !== directionAccuStr) {
+                            newDirection = true;
+                            directionAccuStr = directionStr;
+                            directionAccu = d;
+                            d.nextSameDirection = 0;
+                        }
+                        directionAccu.nextSameDirection += 1;
+
 
                         d.rowClass = [
                             d.mode.name,
-                            `vehicle-${vehicleEvenOdd}`,
-                            `line-${lineEvenOdd}`,
-                            `direction-${directionEvenOdd}`,
-                            `departure-${departureEvenOdd}`,
                         ];
+
+                        if (newLine) d.rowClass.push('newLine');
+                        if (arrivalIsSoon) d.rowClass.push('arrivalIsSoon');
+                        if (newPlatform || (newDirection && !d.platform.name)) {
+                            d.rowClass.push('newPlatformOrDirection');
+                        }
 
                         return d;
                     });
+            },
+            somePlatforms() {
+                return this.departureTable.some(d => d.platform.name);
             },
             reloadButtonClassNames() {
                 if (this.loading) return ['loading'];
@@ -192,13 +224,12 @@
             async getData() {
                 if (!this.stationId) return;
                 if (this.loading) return;
-                // if (!this.stationId || 1) return;
                 this.loading = true;
                 let res;
                 try {
                     res = await fetchDeparture(this.stationId);
                 } catch (err) {
-                    window.console.error(err);
+                    if (_.get(window, 'console.error')) window.console.error(err);
                     res = {};
                 }
                 this.apiData = res;
@@ -267,6 +298,7 @@
                 // the translation in english
             },
             de: {
+                platform: 'Plattform',
                 direction: 'Richtung',
                 line: 'Linie',
                 time: 'Zeit',
@@ -278,6 +310,14 @@
 <style lang="scss" scoped>
     @import "~@/assets/scss/variables.scss";
 
+    td {
+        border: 0 none transparent;
+    }
+
+    .platform, .delay {
+        color: #9e9e9e;
+    }
+
     th,
     td {
         padding: 2px 2px 2px 0;
@@ -286,6 +326,10 @@
             img {
                 width: 20px;
             }
+        }
+
+        &.platform {
+            padding-right: 8px;
         }
 
         &.direction {
@@ -298,12 +342,11 @@
         }
 
         &.time {
-            text-align: right;
             white-space: nowrap;
         }
 
-        &.arrivalIsSoon {
-            font-weight: bold;
+        &.time, &.delay, &.platform {
+            text-align: right;
         }
     }
 
@@ -361,58 +404,51 @@
         }
     }
 
-    @function line($color, $eo) {
-        @if $eo == 'even' { @return $color; }
-        @if $eo == 'odd' { @return darken($color, 1.2%); }
-    }
-
-    @function direction($color, $eo) {
-        @if $eo == 'even' { @return $color; }
-        @if $eo == 'odd' { @return lighten($color, 1.2%); }
-    }
-
-    @function departure($color, $eo) {
-        @if $eo == 'even' { @return $color; }
-        @if $eo == 'odd' { @return darken($color, 1.2%); }
-    }
-
     @each $vehicle in tram, citybus, intercitybus, suburbanrailway, train, cableway, ferry, hailedsharedtaxi {
         $vehicle-class: 'tr.#{$vehicle}';
         $vehicle-bg-color: hsl(hue(map-get($vehicle-colors, '#{$vehicle}2')), 90%, 97%);
         $vehicle-color: hsl(hue(map-get($vehicle-colors, '#{$vehicle}2')), 50%, 40%);
+        $vehicle-color-lighter: hsl(hue(map-get($vehicle-colors, '#{$vehicle}2')), 40%, 60%);
+        $vehicle-color-light: hsl(hue(map-get($vehicle-colors, '#{$vehicle}2')), 70%, 90%);
 
-        @each $line-eo in even, odd {
-            $line-class: '.line-#{$line-eo}';
-            $line-bg-color: line($vehicle-bg-color, $line-eo);
-            #{$vehicle-class}#{$line-class} {
-                td.vehicle {
-                    color: $vehicle-color;
+        $line-bg-color: $vehicle-bg-color;
+        #{$vehicle-class} {
+            td {
+                background-color: $line-bg-color;
+            }
+
+            td.vehicle {
+                color: $vehicle-color;
+            }
+
+            td.delay, td.platform {
+                color: $vehicle-color-lighter;
+            }
+
+            &.arrivalIsSoon td {
+                &.direction, &.time, &.delay, &.platform {
+                    font-weight: bold;
                 }
-                td.vehicle, td.line {
-                    background-color: $line-bg-color;
-                }
-                td.arrivalIsSoon {
+
+                &.direction, &.time {
                     text-shadow: 0 0 15px $vehicle-color;
+                }
+
+                &.delay, &.platform {
+                    text-shadow: 0 0 15px #aaa;
+                }
+
+            }
+
+            &.newPlatformOrDirection {
+                td {
+                    border-top: 1px solid $vehicle-color-light;
                 }
             }
 
-            @each $direction-eo in even, odd {
-                $direction-class: '.direction-#{$direction-eo}';
-                $direction-bg-color: direction($line-bg-color, $direction-eo);
-                #{$vehicle-class}#{$line-class}#{$direction-class} {
-                    td.direction {
-                        background-color: $direction-bg-color;
-                    }
-                }
-
-                @each $departure-eo in even, odd {
-                    $departure-class: '.departure-#{$departure-eo}';
-                    $departure-bg-color: departure($direction-bg-color, $departure-eo);
-                    #{$vehicle-class}#{$line-class}#{$direction-class}#{$departure-class} {
-                        td.delay, td.time {
-                            background-color: $departure-bg-color;
-                        }
-                    }
+            &.newLine {
+                td {
+                    border-top: 2px solid $vehicle-color-light;
                 }
             }
         }
