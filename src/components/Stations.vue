@@ -6,6 +6,7 @@
             v-model.trim="findStation"
             :label="t('find station') + ':'"
             :debounce=500
+            :inputClassName="{loading: loadingStations}"
         )
 
         table.u-full-width(v-if="foundStations.length")
@@ -60,6 +61,7 @@
         name: 'stations',
         data() {
             return {
+                loadingStations: false,
                 foundStations: [],
                 findStation: '',
                 hightlightStations: [],
@@ -107,12 +109,15 @@
                 if (value.length < 3) return;
 
                 let res;
+                this.loadingStations = true;
                 try {
                     res = await fetchSations(value);
                 } catch (err) {
+                    this.loadingStations = false;
                     window.console.error(err);
                     return;
                 }
+                this.loadingStations = false;
                 this.foundStations = res;
             },
         },

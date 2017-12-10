@@ -1,5 +1,23 @@
 @import "~@/assets/scss/variables.scss";
 
+.loading {
+    background-image: repeating-linear-gradient(
+        -45deg,
+        transparent 0,
+        transparent 10px,
+        fade-out($main-color, 0.8) 20px,
+        transparent 30px,
+        transparent 44px
+    );
+    animation: loading 1s infinite linear forwards;
+    background-size: 62px 62px;
+
+    @keyframes loading {
+        0% { background-position: 0% 0; }
+        100% { background-position: -62px 0; }
+    }
+}
+
 a {
     color: $main-color-lighter;
     text-decoration: none;

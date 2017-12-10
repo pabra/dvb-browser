@@ -96,6 +96,10 @@
             },
         },
         created() {
+            window.appReady = true;
+            // just to avoid race conditions
+            this.$nextTick(() => document.querySelector('#app').classList.remove('loading'));
+
             let lang;
             let storeLang = false;
 

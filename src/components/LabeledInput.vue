@@ -6,6 +6,7 @@
             ref="valueEl"
             type="text"
             class="u-full-width"
+            :class="inputClass"
             :readonly="readonly"
             :disabled="disabled"
             v-model.trim="localValue"
@@ -15,6 +16,7 @@
             ref="valueEl"
             type="url"
             class="u-full-width"
+            :class="inputClass"
             :readonly="readonly"
             :disabled="disabled"
             v-model.trim="localValue"
@@ -22,6 +24,7 @@
         <input v-if="type==='checkbox'"
             ref="valueEl"
             type="checkbox"
+            :class="inputClass"
             :readonly="readonly"
             :disabled="disabled"
             v-model="localValue"
@@ -29,7 +32,7 @@
         <textarea v-if="type==='textarea'"
             ref="valueEl"
             class="u-full-width"
-            :class="{monospace}"
+            :class="inputClass"
             :readonly="readonly"
             :disabled="disabled"
             v-model.trim="localValue"
@@ -39,6 +42,7 @@
             type="button"
             @click.stop.prevent="click"
             class="button-primary"
+            :class="inputClass"
             >{{ value }}</button>
 
         <span class="message" v-show="errorMessage">{{ errorMessage }}</span>
@@ -62,7 +66,11 @@
             };
         },
         props: {
-            className: {
+            labelClassName: {
+                type: Object,
+                default: () => ({}),
+            },
+            inputClassName: {
                 type: Object,
                 default: () => ({}),
             },
@@ -108,8 +116,15 @@
             labelClass() {
                 return Object.assign(
                     {},
-                    this.className,
+                    this.labelClassName,
                     { disabled: this.disabled, readonly: this.readonly },
+                );
+            },
+            inputClass() {
+                return Object.assign(
+                    {},
+                    this.inputClassName,
+                    { monospace: this.monospace },
                 );
             },
         },
