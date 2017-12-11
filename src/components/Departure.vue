@@ -91,7 +91,6 @@
         },
         computed: {
             departureTable() {
-                const tryInt = this.tryInt;
                 const departureCount = {};
                 const getSchama = (obj, schema) => schema.map(s => _.get(obj, s)).join('\t');
 
@@ -130,12 +129,12 @@
                         if (aVehIdx < bVehIdx) return -1;
                         if (aVehIdx > bVehIdx) return 1;
 
-                        const aLine = tryInt(a.line);
-                        const bLine = tryInt(b.line);
+                        const aLine = parseInt(a.line, 10);
+                        const bLine = parseInt(b.line, 10);
                         if (typeof aLine === 'number' && typeof bLine === 'string') return -1;
                         if (typeof aLine === 'string' && typeof bLine === 'number') return 1;
-                        if (tryInt(a.line) < tryInt(b.line)) return -1;
-                        if (tryInt(a.line) > tryInt(b.line)) return 1;
+                        if (parseInt(a.line, 10) < parseInt(b.line, 10)) return -1;
+                        if (parseInt(a.line, 10) > parseInt(b.line, 10)) return 1;
 
                         if (a.platform.name && b.platform.name) {
                             if (a.platform.name < b.platform.name) return -1;
@@ -252,10 +251,6 @@
 
                 const neg = totalSec < 0 ? '-' : '';
                 return `${neg}${min}:${_.padStart(sec, 2, '0')}`;
-            },
-            tryInt(string) {
-                const int = parseInt(string, 10);
-                return String(int) === String(string) ? int : string;
             },
             onReloadClicked() {
                 this.pageLoaded = new Date();
