@@ -43,6 +43,8 @@
                 loading: false,
                 showOverlay: null,
                 overlayProps: null,
+                visibilityChange: null,
+                hiddenAttr: null,
                 isNull: _.isNull,
                 Settings,
             };
@@ -94,6 +96,9 @@
             getWindowHeight() {
                 this.$store.commit('setWindowHeight', document.documentElement.clientHeight);
             },
+            handleVisibilityChange() {
+                this.$store.commit('setIsVisible', !document[this.hiddenAttr]);
+            },
         },
         created() {
             window.appReady = true;
@@ -138,11 +143,33 @@
 
                 this.getWindowWidth();
                 this.getWindowHeight();
+
+                if (typeof document.hidden !== 'undefined') { // Opera 12.10 and Firefox 18 and later support
+                    this.hiddenAttr = 'hidden';
+                    this.visibilityChange = 'visibilitychange';
+                } else if (typeof document.msHidden !== 'undefined') {
+                    this.hiddenAttr = 'msHidden';
+                    this.visibilityChange = 'msvisibilitychange';
+                } else if (typeof document.webkitHidden !== 'undefined') {
+                    this.hiddenAttr = 'webkitHidden';
+                    this.visibilityChange = 'webkitvisibilitychange';
+                }
+                if (this.hiddenAttr && this.visibilityChange) {
+                    document.addEventListener(
+                        this.visibilityChange,
+                        this.handleVisibilityChange,
+                        false,
+                    );
+                    this.handleVisibilityChange();
+                }
             });
         },
         beforeDestroy() {
             window.removeEventListener('resize', this.getWindowWidth);
             window.removeEventListener('resize', this.getWindowHeight);
+            if (this.visibilityChange) {
+                window.removeEventListener(this.visibilityChange, this.handleVisibilityChange);
+            }
         },
         components: {
             Settings,

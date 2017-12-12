@@ -261,6 +261,8 @@
         created() {
             this.getData();
             this.intervalRef = setInterval(() => {
+                // don't do anything if app is not visible
+                if (!this.$store.state.isVisible) return;
                 if (this.loading) return;
 
                 const now = new Date();
