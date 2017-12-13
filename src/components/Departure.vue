@@ -64,6 +64,7 @@
 
 <script>
     import _ from 'lodash';
+    import { mapState } from 'vuex';
     import Stations from '@/components/Stations';
     import { vehicles, vehicleOrder } from '@/lib/utils';
     import { fetchDeparture } from '@/lib/fetch';
@@ -90,6 +91,7 @@
             },
         },
         computed: {
+            ...mapState(['isVisible']),
             departureTable() {
                 const departureCount = {};
                 const getSchama = (obj, schema) => schema.map(s => _.get(obj, s)).join('\t');
@@ -256,6 +258,14 @@
                 this.pageLoaded = new Date();
                 this.reloadWaitClassName = 'reload-wait-60s';
                 this.getData();
+            },
+        },
+        watch: {
+            isVisible(value) {
+                if (value) {
+                    this.pageLoaded = new Date();
+                    this.reloadWaitClassName = 'reload-wait-60s';
+                }
             },
         },
         created() {
