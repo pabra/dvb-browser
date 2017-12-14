@@ -47,6 +47,12 @@
                         :rowspan="d.nextSameLine"
                         :title="`${d.mode.title}: ${d.line}`"
                     ) {{ d.line }}
+                        br(v-if="d.routeChangesPerLine.size")
+                        button.route-changes(
+                            v-if="d.routeChangesPerLine.size"
+                            @click="onClickRouteChange(d.routeChangesPerLine)"
+                        )
+                            i.material-icons directions
 
                     td.platform(
                         v-if="d.nextSamePlatform"
@@ -66,6 +72,7 @@
     import _ from 'lodash';
     import { mapState } from 'vuex';
     import Stations from '@/components/Stations';
+    import RouteChanges from '@/components/RouteChanges';
     import { vehicles, vehicleOrder } from '@/lib/utils';
     import { fetchDeparture } from '@/lib/fetch';
 
@@ -175,9 +182,13 @@
                             newLine = true;
                             lineAccuStr = lineStr;
                             lineAccu = d;
+                            lineAccu.routeChangesPerLine = new Set();
                             d.nextSameLine = 0;
                         }
                         lineAccu.nextSameLine += 1;
+                        if (d.routeChanges.length) {
+                            d.routeChanges.forEach(rc => lineAccu.routeChangesPerLine.add(rc));
+                        }
 
                         let newPlatform = false;
                         const platformStr = getSchama(d, platformSchema);
@@ -259,6 +270,16 @@
                 this.reloadWaitClassName = 'reload-wait-60s';
                 this.getData();
             },
+            onClickRouteChange(ids) {
+                if (_.isSet(ids)) ids = [...ids];
+                window.console.log('ids', ids);
+                this.$emit('onShowOverlay', {
+                    component: RouteChanges,
+                    props: {
+                        ids,
+                    },
+                });
+            },
         },
         watch: {
             isVisible(value) {
@@ -298,6 +319,7 @@
         },
         components: {
             Stations,
+            RouteChanges,
         },
         locales: {
             en: {
@@ -415,8 +437,9 @@
         $vehicle-class: 'tr.#{$vehicle}';
         $vehicle-bg-color: hsl(hue(map-get($vehicle-colors, '#{$vehicle}2')), 90%, 97%);
         $vehicle-color: hsl(hue(map-get($vehicle-colors, '#{$vehicle}2')), 50%, 40%);
-        $vehicle-color-lighter: hsl(hue(map-get($vehicle-colors, '#{$vehicle}2')), 40%, 60%);
-        $vehicle-color-light: hsl(hue(map-get($vehicle-colors, '#{$vehicle}2')), 70%, 90%);
+        $vehicle-color-lighter-1: hsl(hue(map-get($vehicle-colors, '#{$vehicle}2')), 40%, 60%);
+        $vehicle-color-lighter-2: hsl(hue(map-get($vehicle-colors, '#{$vehicle}2')), 50%, 80%);
+        $vehicle-color-lighter-3: hsl(hue(map-get($vehicle-colors, '#{$vehicle}2')), 70%, 90%);
 
         $line-bg-color: $vehicle-bg-color;
         #{$vehicle-class} {
@@ -429,7 +452,22 @@
             }
 
             td.delay, td.platform {
-                color: $vehicle-color-lighter;
+                color: $vehicle-color-lighter-1;
+            }
+
+            .route-changes {
+                vertical-align: middle;
+                color: $vehicle-color-lighter-2;
+                margin-right: 3px !important;
+                min-width: 0 !important;
+                width: 25px !important;
+                height: 25px !important;
+                line-height: 0px !important;
+                padding: 0 !important;
+
+                i {
+                    vertical-align: middle;
+                }
             }
 
             &.arrivalIsSoon td {
@@ -439,6 +477,10 @@
 
                 &.direction, &.time {
                     text-shadow: 0 0 15px $vehicle-color;
+
+                    .route-changes {
+                        text-shadow: none;
+                    }
                 }
 
                 &.delay, &.platform {
@@ -449,13 +491,13 @@
 
             &.newPlatformOrDirection {
                 td {
-                    border-top: 1px solid $vehicle-color-light;
+                    border-top: 1px solid $vehicle-color-lighter-3;
                 }
             }
 
             &.newLine {
                 td {
-                    border-top: 2px solid $vehicle-color-light;
+                    border-top: 2px solid $vehicle-color-lighter-3;
                 }
             }
         }

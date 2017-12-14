@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import { getJsonStorage, vehicles } from '@/lib/utils';
+import { fetchRouteChanges } from '@/lib/fetch';
 
 Vue.use(Vuex);
 
@@ -20,6 +21,9 @@ export default new Vuex.Store({
         isVisible: true,
         windowWidth: 0,
         windowHeight: 0,
+        routeChanges: {},
+        routeChangesLoading: false,
+        routeChangesFetched: null,
     },
     getters: {
         chosenMots(state) {
@@ -85,6 +89,27 @@ export default new Vuex.Store({
         },
         setWindowHeight(state, height) {
             state.windowHeight = height;
+        },
+        setRouteChangesLoading(state, isLoading) {
+            state.routeChangesLoading = !!isLoading;
+        },
+        setRouteChanges(state, changes) {
+            state.routeChanges = changes;
+            state.routeChangesFetched = new Date();
+        },
+    },
+    actions: {
+        async getRouteChanges({ commit, state }) {
+            if (
+                state.setRouteChangesLoading || (
+                    state.routeChangesFetched &&
+                    new Date() - state.routeChangesFetched < 60 * 60 * 1000
+                )
+            ) return;
+
+            commit('setRouteChangesLoading', true);
+            commit('setRouteChanges', await fetchRouteChanges());
+            commit('setRouteChangesLoading', false);
         },
     },
 });

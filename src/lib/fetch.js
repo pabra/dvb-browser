@@ -23,6 +23,8 @@ function isApiResponseOk(res) {
 }
 
 function parseApiDate(string) {
+    if (!_.isString(string)) return string;
+
     const match = string.match(/Date\((\d{13})\+\d{4}\)/);
     if (!match) throw TypeError(`unable to parse Date in "${string}"`);
 
@@ -107,7 +109,7 @@ export async function fetchSations(query) {
             return {
                 city,
                 stop: p[3],
-                id: p[0],
+                id: parseInt(p[0], 10),
                 coords: GK4toWGS84(parseInt(p[4], 10), parseInt(p[5], 10)),
             };
         });
@@ -146,6 +148,7 @@ export async function fetchDeparture(stationId, offset = 0, limit = 30) {
             const arrivalTime = d.RealTime ? parseApiDate(d.RealTime) : scheduledTime;
 
             return {
+                id: parseInt(d.Id, 10),
                 arrivalTime,
                 scheduledTime,
                 line: d.LineName,
@@ -161,9 +164,45 @@ export async function fetchDeparture(stationId, offset = 0, limit = 30) {
                 diva: d.Diva ?
                     { number: parseInt(d.Diva.Number, 10), network: d.Diva.Network } :
                     {},
+                routeChanges: d.RouteChanges ?
+                    d.RouteChanges.map(x => parseInt(x, 10)) :
+                    [],
             };
         }),
     };
+}
+
+export async function fetchRouteChanges() {
+    const res = await fetchJson({
+        url: 'https://webapi.vvo-online.de/rc',
+        method: 'POST',
+        data: { shortterm: true },
+    });
+    window.console.log('res', res);
+
+    if (!isApiResponseOk(res)) throw new Error(`not ok result ${JSON.stringify(res)}`);
+
+    return res.data.Changes.reduce((indexedChanges, change) => {
+        /* eslint-disable no-param-reassign */
+        const cleanChange = {
+            id: parseInt(change.Id, 10),
+            lines: change.LineIds.map(line => parseInt(line, 10)),
+            title: change.Title,
+            description: change.Description,
+            type: change.Type,
+            published: parseApiDate(change.PublishDate),
+            valid: change.ValidityPeriods ?
+                change.ValidityPeriods.map(p => ({
+                    begin: parseApiDate(p.Begin),
+                    end: parseApiDate(p.End),
+                })) :
+                [],
+        };
+
+        indexedChanges[cleanChange.id] = cleanChange;
+
+        return indexedChanges;
+    }, {});
 }
 
 // for debugging in browser
@@ -171,4 +210,5 @@ if (process.env && process.env.NODE_ENV === 'development') {
     window.fetchJson = fetchJson;
     window.fetchSations = fetchSations;
     window.fetchDeparture = fetchDeparture;
+    window.fetchRouteChanges = fetchRouteChanges;
 }

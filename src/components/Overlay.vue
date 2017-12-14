@@ -70,6 +70,7 @@
         top: 40px;
         left: 10px;
         max-width: 89%;
+        max-height: 89%;
         background-color: #fff;
         border: 1px solid #999;
         border-radius: 5px;
