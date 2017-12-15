@@ -16,6 +16,8 @@
         )
             i.material-icons autorenew
 
+        span.fetched {{ t('fetched') }}: {{ formatDateDiff( apiCalled - now ) }}
+
         pre(v-if="!apiData.status || !apiData.status.Code || apiData.status.Code !== 'Ok'") {{ apiData.status }}
 
         table.u-full-width
@@ -331,6 +333,7 @@
                 direction: 'Richtung',
                 line: 'Linie',
                 time: 'Zeit',
+                fetched: 'abgerufen',
             },
         },
     };
@@ -338,6 +341,14 @@
 
 <style lang="scss" scoped>
     @import "~@/assets/scss/variables.scss";
+
+    .station-name {
+        font-weight: bold;
+    }
+
+    .fetched {
+        margin-left: 10px;
+    }
 
     td {
         border: 0 none transparent;
@@ -377,10 +388,6 @@
         &.time, &.delay, &.platform {
             text-align: right;
         }
-    }
-
-    .station-name {
-        font-weight: bold;
     }
 
     button.reload {
