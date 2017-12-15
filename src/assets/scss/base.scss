@@ -67,3 +67,22 @@ textarea:focus {
     transition-property: color, background-color, border-color, box-shadow, height, display, opacity, top, left;
     transition-timing-function: ease;
 }
+
+ul {
+    margin: 0;
+    padding: 0;
+
+    li {
+        list-style-position: inside;
+        list-style: none;
+        position: relative;
+        padding-left: 15px;
+
+        &::before {
+            content: '\25CB';
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    }
+}
