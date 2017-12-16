@@ -1,7 +1,7 @@
 <template lang="pug">
     div.root(
         :class="{ loading: routeChangesLoading }"
-        :style="{ height }"
+        :style="{ maxHeight: height }"
     )
         h1 {{ t('Route changes') }}
         p ids: {{ ids.join(', ') }}

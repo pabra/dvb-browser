@@ -38,23 +38,22 @@
                         :rowspan="d.nextSameLine"
                         :title="`${d.mode.title}: ${d.line}`"
                     )
-                        i(
-                            v-if="vehicles[d.mode.name.toLowerCase()]"
-                        ).material-icons
-                            | {{ vehicles[d.mode.name.toLowerCase()].ligature }}
-                        span.vehicle(v-else) {{ d.mode.name }}
+                        span(
+                            :class="{ button: d.routeChangesPerLine.size }"
+                            @click="onClickRouteChange(d.routeChangesPerLine)"
+                        )
+                            i.material-icons(
+                                v-if="vehicles[d.mode.name.toLowerCase()]"
+                                :class="{ reroute: parseInt(now / 1000) % 2 }"
+                            )
+                                | {{ vehicles[d.mode.name.toLowerCase()].ligature }}
+                            span.vehicle(v-else) {{ d.mode.name }}
 
                     td.line(
                         v-if="d.nextSameLine"
                         :rowspan="d.nextSameLine"
                         :title="`${d.mode.title}: ${d.line}`"
                     ) {{ d.line }}
-                        br(v-if="d.routeChangesPerLine.size")
-                        button.route-changes(
-                            v-if="d.routeChangesPerLine.size"
-                            @click="onClickRouteChange(d.routeChangesPerLine)"
-                        )
-                            i.material-icons directions
 
                     td.platform(
                         v-if="d.nextSamePlatform"
@@ -275,6 +274,7 @@
             onClickRouteChange(ids) {
                 if (_.isSet(ids)) ids = [...ids];
                 window.console.log('ids', ids);
+                if (!ids.length) return;
                 this.$emit('onShowOverlay', {
                     component: RouteChanges,
                     props: {
@@ -350,10 +350,6 @@
         margin-left: 10px;
     }
 
-    td {
-        border: 0 none transparent;
-    }
-
     .platform, .delay {
         color: #9e9e9e;
     }
@@ -361,10 +357,22 @@
     th,
     td {
         padding: 2px 2px 2px 0;
+        border: 0 none transparent;
 
         &.vehicle {
-            img {
-                width: 20px;
+            .button {
+                color: inherit;
+                width: 30px;
+                overflow: hidden;
+
+                i.reroute {
+                    margin-left: -30px;
+                }
+
+                i::before {
+                    content: "directions";
+                    margin-right: 5px;
+                }
             }
         }
 
@@ -392,6 +400,7 @@
 
     button.reload {
         i {
+            vertical-align: baseline !important;
             font-size: 26px;
             // use -webkit prefixes here so IE11 ignores it (can't handle it)
             // all other major browsers (even edge) can deal with the prefix
@@ -464,7 +473,7 @@
 
             .route-changes {
                 vertical-align: middle;
-                color: $vehicle-color-lighter-2;
+                color: $vehicle-color;
                 margin-right: 3px !important;
                 min-width: 0 !important;
                 width: 25px !important;
