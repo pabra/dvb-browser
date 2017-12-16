@@ -31,7 +31,7 @@
             ...mapState(['routeChanges', 'routeChangesLoading', 'windowHeight']),
             relevantChanges() {
                 const list = [];
-                const routeChanges = this.routeChanges;
+                const { routeChanges } = this;
                 this.ids.forEach((id) => {
                     const rc = _.get(routeChanges, id);
                     if (rc) list.push(rc);

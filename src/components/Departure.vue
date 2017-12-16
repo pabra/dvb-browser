@@ -101,7 +101,7 @@
         computed: {
             ...mapState(['isVisible']),
             departureTable() {
-                const tryInt = this.tryInt;
+                const { tryInt } = this;
                 const departureCount = {};
                 const getSchama = (obj, schema) => schema.map(s => _.get(obj, s)).join('\t');
 

@@ -109,6 +109,7 @@
             let storeLang = false;
 
             if (this.$route.params.lang) {
+                /* eslint-disable prefer-destructuring */
                 lang = this.$route.params.lang;
                 storeLang = true;
             } else {
