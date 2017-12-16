@@ -95,9 +95,7 @@
     }
 
     button.vehicle, .button.language {
-        padding: 2px !important;
         margin-right: 2px !important;
-        width: 30px;
 
         &.chosen {
             @each $vehicle in tram, citybus, intercitybus, suburbanrailway, train, cableway, ferry, hailedsharedtaxi {

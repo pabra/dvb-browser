@@ -216,6 +216,10 @@
                     padding: 0 2px;
                     margin: 0;
                     min-width: 30px;
+
+                    > i {
+                        vertical-align: middle;
+                    }
                 }
             }
         }

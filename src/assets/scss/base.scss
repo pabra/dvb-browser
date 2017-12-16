@@ -68,6 +68,10 @@ textarea:focus {
     transition-timing-function: ease;
 }
 
+button, .button {
+    padding: 0 15px;
+}
+
 ul {
     margin: 0;
     padding: 0;
