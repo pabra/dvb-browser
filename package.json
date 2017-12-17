@@ -20,7 +20,7 @@
     "vue": "^2.5.11",
     "vue-router": "^3.0.1",
     "vue-translate-plugin": "^1.2.0",
-    "vue2-leaflet": "^0.0.57",
+    "vue2-leaflet": "KoRiGaN/Vue2Leaflet",
     "vuex": "^3.0.1",
     "webpack-visualizer-plugin": "^0.1.11"
   },
