@@ -90,10 +90,8 @@
                 this.showOverlay = component;
                 this.overlayProps = props;
             },
-            getWindowWidth() {
+            getWindowDimension() {
                 this.$store.commit('setWindowWidth', document.documentElement.clientWidth);
-            },
-            getWindowHeight() {
                 this.$store.commit('setWindowHeight', document.documentElement.clientHeight);
             },
             handleVisibilityChange() {
@@ -138,12 +136,10 @@
             this.setHrefLang(this.$route);
         },
         mounted() {
-            this.$nextTick(function _fn() {
-                window.addEventListener('resize', _.throttle(this.getWindowWidth, 500));
-                window.addEventListener('resize', _.throttle(this.getWindowHeight, 500));
+            this.$nextTick(() => {
+                window.addEventListener('resize', _.throttle(this.getWindowDimension, 500));
 
-                this.getWindowWidth();
-                this.getWindowHeight();
+                this.getWindowDimension();
 
                 if (typeof document.hidden !== 'undefined') { // Opera 12.10 and Firefox 18 and later support
                     this.hiddenAttr = 'hidden';
@@ -166,8 +162,7 @@
             });
         },
         beforeDestroy() {
-            window.removeEventListener('resize', this.getWindowWidth);
-            window.removeEventListener('resize', this.getWindowHeight);
+            window.removeEventListener('resize', this.getWindowDimension);
             if (this.visibilityChange) {
                 window.removeEventListener(this.visibilityChange, this.handleVisibilityChange);
             }
