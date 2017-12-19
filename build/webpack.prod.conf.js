@@ -8,6 +8,7 @@ var CopyWebpackPlugin = require('copy-webpack-plugin')
 var HtmlWebpackPlugin = require('html-webpack-plugin')
 var ExtractTextPlugin = require('extract-text-webpack-plugin')
 var OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
+var FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 var Visualizer = require('webpack-visualizer-plugin');
 var PrerenderSpaPlugin = require('prerender-spa-plugin')
 
@@ -47,6 +48,11 @@ var webpackConfig = merge(baseWebpackConfig, {
             cssProcessorOptions: {
                 safe: true
             }
+        }),
+        new FaviconsWebpackPlugin({
+            logo: path.resolve(__dirname, '../src/assets/img/dvb_browser.png'),
+            prefix: 'static/icons-[hash]/',
+            background: '#ffc107',
         }),
         // generate dist index.html with correct asset hash for caching.
         // you can customize output by editing /index.html
