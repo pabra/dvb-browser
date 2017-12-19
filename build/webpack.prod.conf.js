@@ -25,7 +25,8 @@ var webpackConfig = merge(baseWebpackConfig, {
     output: {
         path: config.build.assetsRoot,
         filename: utils.assetsPath('js/[name].[chunkhash].js'),
-        chunkFilename: utils.assetsPath('js/[id].[chunkhash].js')
+        // chunk filename must end with "chunk.js" so it can be removed by PrerenderSpaPlugin
+        chunkFilename: utils.assetsPath('js/[name].[chunkhash].chunk.js'),
     },
     plugins: [
         // http://vuejs.github.io/vue-loader/en/workflow/production.html
@@ -104,6 +105,14 @@ var webpackConfig = merge(baseWebpackConfig, {
             path.join(__dirname, '../dist'),
             // List of routes to prerender
             ['/', '/en/about', '/de/about', '/about'],
+            {
+                postProcessHtml: function (context) {
+                    return context.html.replace(
+                        /<script[^>]+?src="([^"]*?\.chunk\.js)"[^>]*?>[^<]*?<\/script>/gi,
+                        ''
+                    );
+                },
+            },
         ),
         new Visualizer({ filename: './stats.html' }),
     ]

@@ -3,8 +3,14 @@ import 'normalize-scss/sass/normalize/_import-now.scss';
 import 'skeleton-scss/scss/skeleton.scss';
 import 'material-design-icons/iconfont/material-icons.css';
 
-import 'whatwg-fetch';
-import 'babel-polyfill';
+// import 'whatwg-fetch';
+// import 'babel-polyfill';
+// import 'regenerator-runtime';
+import 'regenerator-runtime/runtime';
+// import 'core-js';
+// // import 'babel-runtime';
+// import 'babel-core/register';
+// import 'babel-runtime/regenerator';
 
 import Vue from 'vue';
 import _ from 'lodash';
@@ -23,15 +29,46 @@ Vue.config.warnHandler = vueWarnHandler;
 router.onReady(_.noop, vueRouterErrorHandler);
 router.onError(vueRouterErrorHandler);
 
-/* eslint-disable no-new */
-const app = new Vue({
-    el: '#app',
-    router,
-    store,
-    render: h => h(App),
-});
+function browserSupportsAllFeatures() {
+    // return window.Promise && window.fetch && window.Symbol;
+    // return window.fetch;
+    return false;
+}
 
-// for debugging in browser
-if (process.env && process.env.NODE_ENV === 'development') {
-    window.app = app;
+function loadScript(done) {
+    import(/* webpackChunkName: "polyfills" */ '@/polyfills').then(() => {
+        done();
+    }).catch((error) => {
+        throw error;
+    });
+}
+
+function main(err) {
+    // Initiate all other code paths.
+    // If there's an error loading the polyfills, handle that
+    // case gracefully and track that the error occurred.
+    if (err) throw err;
+
+    const app = new Vue({
+        el: '#app',
+        router,
+        store,
+        render: h => h(App),
+    });
+
+    // for debugging in browser
+    if (process.env && process.env.NODE_ENV === 'development') {
+        window.app = app;
+    }
+}
+
+// window.fetch = undefined;
+// eslint-disable-next-line
+// debugger;
+if (browserSupportsAllFeatures()) {
+    // Browsers that support all features run `main()` immediately.
+    main();
+} else {
+    // All other browsers loads polyfills and then run `main()`.
+    loadScript(main);
 }
