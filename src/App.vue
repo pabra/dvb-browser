@@ -111,7 +111,7 @@
                 lang = this.$route.params.lang;
                 storeLang = true;
             } else {
-                lang = localStorage.getItem('language');
+                lang = this.$store.state.localStorageAvailable ? localStorage.getItem('language') : null;
             }
 
             if (['de', 'en'].indexOf(lang) === -1) {
@@ -128,9 +128,10 @@
 
             this.setLang(lang);
 
-            if (storeLang) localStorage.setItem('language', lang);
+            if (storeLang && this.$store.state.localStorageAvailable) localStorage.setItem('language', lang);
 
             this.$translate.$on('language:changed', (language) => {
+                if (!this.$store.state.localStorageAvailable) return;
                 localStorage.setItem('language', language);
             });
             this.setHrefLang(this.$route);

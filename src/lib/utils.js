@@ -136,8 +136,31 @@ export function parseMode(id) {
     return undefined;
 }
 
+export function localStorageAvailable() {
+    const storage = window.localStorage;
+    const x = '__storage_test__';
+    try {
+        storage.setItem(x, x);
+        storage.removeItem(x);
+        return true;
+    } catch (e) {
+        return e instanceof DOMException && (
+            // everything except Firefox
+            e.code === 22 ||
+            // Firefox
+            e.code === 1014 ||
+            // test name field too, because code might not be present
+            // everything except Firefox
+            e.name === 'QuotaExceededError' ||
+            // Firefox
+            e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
+            // acknowledge QuotaExceededError only if there's something already stored
+            storage.length !== 0;
+    }
+}
+
 export function getJsonStorage(storageKey, defaultValue = null) {
-    const value = localStorage.getItem(storageKey);
+    const value = localStorageAvailable() ? localStorage.getItem(storageKey) : null;
     if (value === null) return defaultValue;
 
     let jsonValue;
