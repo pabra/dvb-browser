@@ -11,6 +11,7 @@ var OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
 var FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 var Visualizer = require('webpack-visualizer-plugin');
 var PrerenderSpaPlugin = require('prerender-spa-plugin')
+var HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
 var env = config.build.env
 
@@ -32,6 +33,7 @@ var webpackConfig = merge(baseWebpackConfig, {
         new webpack.DefinePlugin({
             'process.env': env
         }),
+        new HardSourceWebpackPlugin(),
         new webpack.optimize.UglifyJsPlugin({
             compress: {
                 warnings: false
