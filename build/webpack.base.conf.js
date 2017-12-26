@@ -21,6 +21,7 @@ module.exports = {
     resolve: {
         extensions: ['.js', '.vue', '.json'],
         alias: {
+            proj4: require.resolve('proj4/dist/proj4-src'),
             '@': resolve('src'),
         }
     },
