@@ -105,7 +105,7 @@
             },
             click: {
                 type: Function,
-                default: () => {},
+                default: _.noop,
             },
             monospace: {
                 type: Boolean,

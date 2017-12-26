@@ -7,7 +7,9 @@ import 'whatwg-fetch';
 import 'babel-polyfill';
 
 import Vue from 'vue';
+import _ from 'lodash';
 import '@/locales';
+import { vueErrorHandler, vueWarnHandler, vueRouterErrorHandler } from '@/lib/logger';
 import router from '@/router';
 import store from '@/store';
 import App from '@/App';
@@ -15,6 +17,11 @@ import App from '@/App';
 import '@/assets/scss/base.scss';
 
 Vue.config.productionTip = false;
+Vue.config.errorHandler = vueErrorHandler;
+Vue.config.warnHandler = vueWarnHandler;
+
+router.onReady(_.noop, vueRouterErrorHandler);
+router.onError(vueRouterErrorHandler);
 
 /* eslint-disable no-new */
 const app = new Vue({

@@ -45,7 +45,6 @@
             },
         },
         created() {
-            window.console.log('RC created', this);
             this.$store.dispatch('getRouteChanges');
         },
         locales: {

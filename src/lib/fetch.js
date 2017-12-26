@@ -4,15 +4,10 @@
 import _ from 'lodash';
 import { isObject, GK4toWGS84, parseMot } from '@/lib/utils';
 import store from '@/store';
+import Logger, { stringifyObj } from '@/lib/logger';
+import { ValueError, FetchError } from '@/lib/errors';
 
-function handleError(err) {
-    return {
-        ok: false,
-        text: String(err),
-        data: {},
-        status: null,
-    };
-}
+const logger = Logger.get('fetch');
 
 function isApiResponseOk(res) {
     return [
@@ -28,7 +23,7 @@ function parseApiDate(string) {
     // for departures on the same day: /Date(1513736087770+0100)/
     // departures on the next day: /Date(1513751520000-0000)/
     const match = string.match(/Date\((\d{13})[+-]\d{4}\)/);
-    if (!match) throw TypeError(`unable to parse Date in "${string}"`);
+    if (!match) throw ValueError(`unable to parse Date in "${string}"`);
 
     return new Date(parseInt(match[1], 10));
 }
@@ -45,7 +40,7 @@ async function fetchJson(options) {
 
     const opts = Object.assign({}, defaults, options);
 
-    if (!opts.url) return handleError(new Error('url required'), opts);
+    if (!opts.url) throw new ValueError('url required');
 
     const fetchArgs = {
         method: opts.method,
@@ -62,19 +57,10 @@ async function fetchJson(options) {
         fetchArgs.body = isObject(opts.data) ? JSON.stringify(opts.data) : opts.data;
     }
 
-    let response;
-    try {
-        response = await fetch(opts.url, fetchArgs);
-    } catch (err) {
-        return handleError(err, opts);
-    }
-
-    let json;
-    try {
-        json = await response.json();
-    } catch (err) {
-        return handleError(err, opts);
-    }
+    logger.debug('fetch', opts);
+    const response = await fetch(opts.url, fetchArgs);
+    const json = await response.json();
+    logger.debug('fetched data', json);
 
     return {
         ok: response.status === 200,
@@ -98,10 +84,10 @@ export async function fetchSations(query) {
     });
 
     if (!isApiResponseOk(res) || !res.data.Points) {
-        throw new Error(`not ok result ${JSON.stringify(res)}`);
+        throw new FetchError(`fetch stations "${query}" caused unexpected response "${stringifyObj(res)}"`);
     }
 
-    return res.data.Points
+    const stations = res.data.Points
         .map(p => p.split('|'))
         .filter(p => p[3])
         // remove duplicates
@@ -115,6 +101,10 @@ export async function fetchSations(query) {
                 coords: GK4toWGS84(parseInt(p[4], 10), parseInt(p[5], 10)),
             };
         });
+
+    logger.debug('fetched stations', stations);
+
+    return stations;
 }
 
 export async function fetchDeparture(stationId, offset = 0, limit = 30) {
@@ -134,18 +124,18 @@ export async function fetchDeparture(stationId, offset = 0, limit = 30) {
             mot: store.getters.chosenMots,
         },
     });
-    window.console.log('res', res);
 
-    if (!isApiResponseOk(res)) throw new Error(`not ok result ${JSON.stringify(res)}`);
+    if (!isApiResponseOk(res)) {
+        throw new FetchError(`fetch departures for station "${stationId}" caused unexpected response "${stringifyObj(res)}"`);
+    }
 
     if (!res.data.Departures) res.data.Departures = [];
 
-    return {
+    const departures = {
         city: res.data.Place,
         stop: res.data.Name,
         status: res.data.Status,
         departures: res.data.Departures.map((d) => {
-            // window.console.log('d', d);
             const scheduledTime = parseApiDate(d.ScheduledTime);
             const arrivalTime = d.RealTime ? parseApiDate(d.RealTime) : scheduledTime;
 
@@ -172,6 +162,10 @@ export async function fetchDeparture(stationId, offset = 0, limit = 30) {
             };
         }),
     };
+
+    logger.debug('fetched departures', departures);
+
+    return departures;
 }
 
 export async function fetchRouteChanges() {
@@ -180,11 +174,12 @@ export async function fetchRouteChanges() {
         method: 'POST',
         data: { shortterm: true },
     });
-    window.console.log('res', res);
 
-    if (!isApiResponseOk(res)) throw new Error(`not ok result ${JSON.stringify(res)}`);
+    if (!isApiResponseOk(res)) {
+        throw new FetchError(`fetch route changes caused unexpected response "${stringifyObj(res)}"`);
+    }
 
-    return res.data.Changes.reduce((indexedChanges, change) => {
+    const routeChanges = res.data.Changes.reduce((indexedChanges, change) => {
         /* eslint-disable no-param-reassign */
         const cleanChange = {
             id: parseInt(change.Id, 10),
@@ -205,6 +200,10 @@ export async function fetchRouteChanges() {
 
         return indexedChanges;
     }, {});
+
+    logger.debug('fetched route changes', routeChanges);
+
+    return routeChanges;
 }
 
 // for debugging in browser

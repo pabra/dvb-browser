@@ -74,6 +74,7 @@
     import { mapState } from 'vuex';
     import Stations from '@/components/Stations';
     import RouteChanges from '@/components/RouteChanges';
+    import Logger from '@/lib/logger';
     import { vehicles, vehicleOrder } from '@/lib/utils';
     import { fetchDeparture } from '@/lib/fetch';
 
@@ -90,6 +91,7 @@
                 reloadWaitClassName: 'reload-wait-60s',
                 apiData: {},
                 apiCalled: null,
+                logger: Logger.get(`${this.$options.name} component`),
             };
         },
         props: {
@@ -243,7 +245,7 @@
                 try {
                     res = await fetchDeparture(this.stationId);
                 } catch (err) {
-                    if (_.get(window, 'console.error')) window.console.error(err);
+                    this.logger.error('get departures for station', this.stationId, 'caused error', err);
                     res = {};
                 }
                 this.apiData = res;
@@ -278,7 +280,7 @@
             },
             onClickRouteChange(ids) {
                 if (_.isSet(ids)) ids = [...ids];
-                window.console.log('ids', ids);
+                this.logger.debug('click route change ids', ids);
                 if (!ids.length) return;
                 this.$emit('onShowOverlay', {
                     component: RouteChanges,

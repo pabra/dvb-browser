@@ -56,6 +56,7 @@
     import Departure from '@/components/Departure';
     import { fetchSations } from '@/lib/fetch';
     import Leaflet from '@/components/Leaflet';
+    import Logger from '@/lib/logger';
 
     export default {
         name: 'stations',
@@ -65,6 +66,7 @@
                 foundStations: [],
                 findStation: '',
                 hightlightStations: [],
+                logger: Logger.get(`${this.$options.name} component`),
             };
         },
         computed: {
@@ -83,6 +85,7 @@
                 this.$store.commit('removeStation', station);
             },
             showDeparture(station) {
+                this.logger.debug('show departures of station', station);
                 this.$router.push({
                     name: Departure.name,
                     params: { stationId: parseInt(station.id, 10) },
@@ -92,7 +95,7 @@
                 return !!this.sortedFavoriteStations.find(s => s.id === station.id);
             },
             showLocaton(station) {
-                window.console.log('station', station);
+                this.logger.debug('show location of station', station);
                 this.$emit('onShowOverlay', {
                     component: Leaflet,
                     props: {
@@ -114,7 +117,7 @@
                     res = await fetchSations(value);
                 } catch (err) {
                     this.loadingStations = false;
-                    window.console.error(err);
+                    this.logger.error('find station', value, 'caused error', err);
                     return;
                 }
                 this.loadingStations = false;

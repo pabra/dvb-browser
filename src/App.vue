@@ -26,6 +26,7 @@
 
 <script>
     import _ from 'lodash';
+    import Logger from '@/lib/logger';
     import Stations from '@/components/Stations';
     import About from '@/components/About';
     import Settings from '@/components/Settings';
@@ -47,6 +48,7 @@
                 hiddenAttr: null,
                 isNull: _.isNull,
                 Settings,
+                logger: Logger.get(`${this.$options.name} component`),
             };
         },
         methods: {
@@ -85,8 +87,8 @@
                 this.showOverlay = null;
             },
             onShowOverlay(component, props = null) {
-                window.console.log('component', component);
-                window.console.log('props', props);
+                this.logger.debug('overlay component', (component && component.name) || component);
+                this.logger.debug('overlay props', props);
                 this.showOverlay = component;
                 this.overlayProps = props;
             },
@@ -95,7 +97,9 @@
                 this.$store.commit('setWindowHeight', document.documentElement.clientHeight);
             },
             handleVisibilityChange() {
-                this.$store.commit('setIsVisible', !document[this.hiddenAttr]);
+                const isVisible = !document[this.hiddenAttr];
+                this.logger.debug('visibility changed -> isVisible', isVisible);
+                this.$store.commit('setIsVisible', isVisible);
             },
         },
         created() {

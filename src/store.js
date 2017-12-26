@@ -87,7 +87,6 @@ export default new Vuex.Store({
             state.chosenVehicles = defaultStates.chosenVehicles();
         },
         setIsVisible(state, isVisible) {
-            window.console.log('isVisible', isVisible);
             state.isVisible = !!isVisible;
         },
         setWindowWidth(state, width) {
