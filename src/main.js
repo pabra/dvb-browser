@@ -3,14 +3,7 @@ import 'normalize-scss/sass/normalize/_import-now.scss';
 import 'skeleton-scss/scss/skeleton.scss';
 import 'material-design-icons/iconfont/material-icons.css';
 
-// import 'whatwg-fetch';
-// import 'babel-polyfill';
-// import 'regenerator-runtime';
 import 'regenerator-runtime/runtime';
-// import 'core-js';
-// // import 'babel-runtime';
-// import 'babel-core/register';
-// import 'babel-runtime/regenerator';
 
 import Vue from 'vue';
 import _ from 'lodash';
@@ -30,16 +23,22 @@ router.onReady(_.noop, vueRouterErrorHandler);
 router.onError(vueRouterErrorHandler);
 
 function browserSupportsAllFeatures() {
-    // return window.Promise && window.fetch && window.Symbol;
-    // return window.fetch;
-    return false;
+    return (
+        typeof window.fetch === 'function' &&
+        typeof window.Promise === 'function' &&
+        typeof Object.assign === 'function' &&
+        typeof Array.prototype.find === 'function' &&
+        typeof Array.prototype.findIndex === 'function' &&
+        typeof window.Set === 'function'
+    );
 }
 
 function loadScript(done) {
-    import(/* webpackChunkName: "polyfills" */ '@/polyfills').then(() => {
+    /* eslint-disable prefer-arrow-callback */
+    import(/* webpackChunkName: "polyfills" */ '@/polyfills').then(function _fn() {
         done();
-    }).catch((error) => {
-        throw error;
+    }).catch(function _fn(error) {
+        if (error) throw error;
     });
 }
 
