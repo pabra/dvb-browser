@@ -87,6 +87,31 @@
     "node": ">= 4.0.0",
     "npm": ">= 3.0.0"
   },
+  "babel": {
+    "presets": [
+      [
+        "env",
+        {
+          "modules": false
+        }
+      ],
+      "stage-2"
+    ],
+    "plugins": [
+      "lodash"
+    ],
+    "env": {
+      "test": {
+        "presets": [
+          "env",
+          "stage-2"
+        ],
+        "plugins": [
+          "istanbul"
+        ]
+      }
+    }
+  },
   "browserslist": [
     "> 2%",
     "> 2% in DE",
