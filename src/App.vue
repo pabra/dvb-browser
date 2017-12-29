@@ -26,6 +26,7 @@
 
 <script>
     import _ from 'lodash';
+    import { mapState } from 'vuex';
     import Logger from '@/lib/logger';
     import Stations from '@/components/Stations';
     import About from '@/components/About';
@@ -49,7 +50,11 @@
                 isNull: _.isNull,
                 Settings,
                 logger: Logger.get(`${this.$options.name} component`),
+                appLoaded: new Date(),
             };
+        },
+        computed: {
+            ...mapState(['isVisible']),
         },
         methods: {
             onClickSettings() {
@@ -180,6 +185,12 @@
             $route(to) {
                 if (to.params.lang) this.setLang(to.params.lang);
                 this.setHrefLang(to);
+            },
+            isVisible(visible) {
+                // reload the app after 24 hours
+                if (visible && new Date() - this.appLoaded > 24 * 60 * 60 * 1000) {
+                    window.location.reload();
+                }
             },
         },
     };
