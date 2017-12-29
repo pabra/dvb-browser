@@ -32,7 +32,6 @@
     import About from '@/components/About';
     import Settings from '@/components/Settings';
     import Overlay from '@/components/Overlay';
-    import { isArray, isObject } from '@/lib/utils';
 
     export default {
         name: 'app',
@@ -84,9 +83,9 @@
                     name: route.name,
                     params: Object.assign({}, route.params, { lang: 'en' }),
                 });
-                langDefault.href = isObject(routeDefault) ? routeDefault.href : '';
-                langDe.href = isObject(routeDe) ? routeDe.href : '';
-                langEn.href = isObject(routeEn) ? routeEn.href : '';
+                langDefault.href = _.get(routeDefault, 'href', '');
+                langDe.href = _.get(routeDe, 'href', '');
+                langEn.href = _.get(routeEn, 'href', '');
             },
             onOverlayDestroy() {
                 this.showOverlay = null;
@@ -124,7 +123,7 @@
             }
 
             if (['de', 'en'].indexOf(lang) === -1) {
-                if ('languages' in window.navigator && isArray(window.navigator.languages) && window.navigator.languages.length > 0) {
+                if ('languages' in window.navigator && _.isArray(window.navigator.languages) && window.navigator.languages.length > 0) {
                     lang = window.navigator.languages[0].substr(0, 2);
                 } else if (window.navigator.language) {
                     lang = window.navigator.language.substr(0, 2);

@@ -1,33 +1,10 @@
 import proj4 from 'proj4';
 
-/**
- * isObject - test if argument is an Object
- *
- * @param {Object} obj thing to be tested
- *
- * @return {Boolean}
- */
-export function isObject(obj) {
-    return Object.prototype.toString.call(obj) === '[object Object]';
-}
-
-
-/**
- * isArray - test if argument is an Array
- *
- * @param {Array} arr thing to be tested
- *
- * @return {Boolean}
- */
-export const isArray = Array.isArray || (arr => Object.prototype.toString.call(arr) === '[object Array]');
-
-
 proj4.defs('GK4', '+proj=tmerc +lat_0=0 +lon_0=12 +k=1 +x_0=4500000 +y_0=0 +ellps=bessel +datum=potsdam +units=m');
 
 export function GK4toWGS84(lat, lng) {
     return proj4('GK4', 'WGS84', [lng, lat]).reverse();
 }
-
 
 export const vehicles = {
     tram: {

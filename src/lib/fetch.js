@@ -2,7 +2,7 @@
 // https://github.com/kiliankoe/vvo/wiki/WebAPI
 
 import _ from 'lodash';
-import { isObject, GK4toWGS84, parseMot } from '@/lib/utils';
+import { GK4toWGS84, parseMot } from '@/lib/utils';
 import store from '@/store';
 import Logger, { stringifyObj } from '@/lib/logger';
 import { ValueError, FetchError } from '@/lib/errors';
@@ -54,7 +54,7 @@ async function fetchJson(options) {
 
     if (opts.data) {
         fetchArgs.headers['Content-Type'] = `${opts.type}; charset=utf-8`;
-        fetchArgs.body = isObject(opts.data) ? JSON.stringify(opts.data) : opts.data;
+        fetchArgs.body = _.isPlainObject(opts.data) ? JSON.stringify(opts.data) : opts.data;
     }
 
     logger.debug('fetch', opts);
