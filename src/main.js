@@ -29,6 +29,7 @@ function browserSupportsAllFeatures() {
         typeof Object.assign === 'function' &&
         typeof Array.prototype.find === 'function' &&
         typeof Array.prototype.findIndex === 'function' &&
+        typeof Date.now === 'function' &&
         typeof window.Set === 'function'
     );
 }
