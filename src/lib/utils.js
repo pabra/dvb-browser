@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import proj4 from 'proj4';
 
 proj4.defs('GK4', '+proj=tmerc +lat_0=0 +lon_0=12 +k=1 +x_0=4500000 +y_0=0 +ellps=bessel +datum=potsdam +units=m');
@@ -147,4 +148,16 @@ export function getJsonStorage(storageKey, defaultValue = null) {
     } catch (err) {
         return defaultValue;
     }
+}
+
+/**
+ * tryInt - Description
+ *
+ * @param {any} value the value to test if it's an integer
+ *
+ * @return {any} if value look like an integer, it's return as an int or value otherwise
+ */
+export function tryInt(value) {
+    const int = parseInt(value, 10);
+    return String(int) === String(value) ? int : value;
 }

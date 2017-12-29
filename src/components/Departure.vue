@@ -75,7 +75,7 @@
     import Stations from '@/components/Stations';
     import RouteChanges from '@/components/RouteChanges';
     import Logger from '@/lib/logger';
-    import { vehicles, vehicleOrder } from '@/lib/utils';
+    import { vehicles, vehicleOrder, tryInt } from '@/lib/utils';
     import { fetchDeparture } from '@/lib/fetch';
 
     export default {
@@ -103,7 +103,6 @@
         computed: {
             ...mapState(['isVisible']),
             departureTable() {
-                const { tryInt } = this;
                 const departureCount = {};
                 const getSchama = (obj, schema) => schema.map(s => _.get(obj, s)).join('\t');
 
@@ -268,10 +267,6 @@
 
                 const neg = totalSec < 0 ? '-' : '';
                 return `${neg}${min}:${_.padStart(sec, 2, '0')}`;
-            },
-            tryInt(string) {
-                const int = parseInt(string, 10);
-                return String(int) === String(string) ? int : string;
             },
             onReloadClicked() {
                 this.pageLoaded = new Date();
