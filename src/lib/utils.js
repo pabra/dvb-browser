@@ -161,3 +161,16 @@ export function tryInt(value) {
     const int = parseInt(value, 10);
     return String(int) === String(value) ? int : value;
 }
+
+/**
+ * ensureInt - Description
+ *
+ * @param {type}   value            the value to ensure to be an int
+ * @param {number} [defaultValue=0] this will be returned if value does not look like an int
+ *
+ * @return {type} Description
+ */
+export function ensureInt(value, defaultValue = 0) {
+    const int = tryInt(value);
+    return _.isInteger(int) ? int : defaultValue;
+}

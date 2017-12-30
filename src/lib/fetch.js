@@ -99,6 +99,7 @@ export async function fetchSations(query) {
                 stop: p[3],
                 id: parseInt(p[0], 10),
                 coords: GK4toWGS84(parseInt(p[4], 10), parseInt(p[5], 10)),
+                timeFetched: Date.now(),
             };
         });
 

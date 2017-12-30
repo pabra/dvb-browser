@@ -51,12 +51,14 @@
 </template>
 
 <script>
+    import _ from 'lodash';
     import { mapGetters } from 'vuex';
     import LabeledInput from '@/components/LabeledInput';
     import Departure from '@/components/Departure';
     import { fetchSations } from '@/lib/fetch';
     import Leaflet from '@/components/Leaflet';
     import Logger from '@/lib/logger';
+    import { ensureInt } from '@/lib/utils';
 
     export default {
         name: 'stations',
@@ -71,15 +73,28 @@
         },
         computed: {
             ...mapGetters(['sortedFavoriteStations']),
+            favoriteStationsToUpdate() {
+                return this.sortedFavoriteStations
+                    .filter((station) => {
+                        const timeFetched = ensureInt(_.get(station, 'timeFetched'));
+                        return Date.now() - timeFetched > 7 * 24 * 60 * 60 * 1000;
+                    }).sort((a, b) => {
+                        const aTimeFetched = ensureInt(_.get(a, 'timeFetched'));
+                        const bTimeFetched = ensureInt(_.get(b, 'timeFetched'));
+                        if (aTimeFetched < bTimeFetched) return -1;
+                        if (aTimeFetched > bTimeFetched) return 1;
+                        return 0;
+                    });
+            },
         },
         methods: {
             highlight(station) {
                 this.hightlightStations.push(station.id);
                 setTimeout(() => { this.hightlightStations.shift(); }, 200);
             },
-            addStation(station) {
+            addStation(station, highlight = true) {
                 this.$store.commit('addStation', station);
-                this.highlight(station);
+                if (highlight) this.highlight(station);
             },
             removeStation(station) {
                 this.$store.commit('removeStation', station);
@@ -105,23 +120,40 @@
                     },
                 });
             },
+            async getStationData(value) {
+                this.loadingStations = true;
+                let res;
+                try {
+                    res = await fetchSations(value);
+                } catch (err) {
+                    this.loadingStations = false;
+                    this.logger.error('find station', value, 'caused error', err);
+                    res = [];
+                }
+                this.loadingStations = false;
+                return res;
+            },
+            async updateOneStation() {
+                const station = _.get(this.favoriteStationsToUpdate, '[0]');
+                if (!_.isPlainObject(station)) return;
+
+                this.logger.debug('update station', station);
+                const stations = await this.getStationData(_.get(station, 'id'));
+                this.removeStation(station);
+                if (!stations.length) return;
+
+                this.addStation(stations[0], false);
+            },
+        },
+        created() {
+            this.updateOneStation();
         },
         watch: {
             async findStation(value) {
                 if (!value) return;
                 if (value.length < 3) return;
 
-                let res;
-                this.loadingStations = true;
-                try {
-                    res = await fetchSations(value);
-                } catch (err) {
-                    this.loadingStations = false;
-                    this.logger.error('find station', value, 'caused error', err);
-                    return;
-                }
-                this.loadingStations = false;
-                this.foundStations = res;
+                this.foundStations = await this.getStationData(value);
             },
         },
         components: {
