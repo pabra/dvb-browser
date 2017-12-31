@@ -80,16 +80,24 @@ const htmlHandler = (messages, context) => {
 
 const accessLogLogger = Logger.get('accessLogHandler');
 const accessLogHandler = async (messages, context) => {
-    const data = qs.stringify({
+    const body = JSON.stringify({
         name: context.name,
         level: context.level.name,
-        messages: stringifyObj(messages),
+        messages,
         time: new Date().toISOString(),
         version: packageData.version,
     });
 
+    const headers = {
+        'Content-Type': 'text/plain',
+    };
+
     try {
-        fetch(`/?${data}`, { method: 'GET' });
+        fetch('/log', {
+            method: 'POST',
+            headers,
+            body,
+        });
     } catch (error) {
         if (uncoughtErrorCounter > 10) return;
 
@@ -108,7 +116,12 @@ Logger.setLevel(levelToSet);
 Logger.setHandler((messages, context) => {
     consoleHandler(messages, context);
     if (logShow) htmlHandler(messages, context);
-    if (!isDev) accessLogHandler(messages, context);
+    if (
+        !isDev &&
+        `${window.location.protocol}//${window.location.hostname}` === packageData.homepage
+    ) {
+        accessLogHandler(messages, context);
+    }
 });
 
 if (logLevel && !Logger[logLevel.toUpperCase()]) {

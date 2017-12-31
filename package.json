@@ -5,7 +5,7 @@
   "author": "Patrick Braune <pabra@netzfruech.de>",
   "private": true,
   "license": "MIT",
-  "homepage": "https://dvb.peppnet.de/",
+  "homepage": "https://dvb.peppnet.de",
   "bugs": {
     "url": "https://github.com/pabra/dvb-browser/issues",
     "email": "pabra@netzfruech.de"
