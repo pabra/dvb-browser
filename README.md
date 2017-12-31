@@ -1,6 +1,9 @@
 DVB Browser
 ===========
 
+[![GitHub package version](https://img.shields.io/github/package-json/v/pabra/dvb-browser.svg)]()
+[![GitHub issues](https://img.shields.io/github/issues/pabra/dvb-browser.svg)](https://github.com/pabra/dvb-browser/issues)
+
 Search for stations and see departures for each station of DVB (Dresdner Verkehrsbetriebe)
 and VVO (Verkehrsverbund Oberelbe).
 

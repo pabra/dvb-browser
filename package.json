@@ -2,9 +2,18 @@
   "name": "dvb-browser",
   "version": "0.0.1",
   "description": "A Vue.js project",
-  "author": "pabra <pabra@netzfruech.de>",
+  "author": "Patrick Braune <pabra@netzfruech.de>",
   "private": true,
   "license": "MIT",
+  "homepage": "https://dvb.peppnet.de/",
+  "bugs": {
+    "url": "https://github.com/pabra/dvb-browser/issues",
+    "email": "pabra@netzfruech.de"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pabra/dvb-browser.git"
+  },
   "scripts": {
     "dev": "node build/dev-server.js",
     "start": "npm run dev",
@@ -45,6 +54,7 @@
     "http-proxy-middleware": "^0.17.4",
     "imports-loader": "^0.7.1",
     "js-logger": "^1.4.1",
+    "json-loader": "^0.5.7",
     "lodash": "^4.17.4",
     "markdown-loader": "^2.0.1",
     "material-design-icons": "^3.0.1",
