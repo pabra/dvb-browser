@@ -1,6 +1,6 @@
 {
   "name": "dvb-browser",
-  "version": "0.0.1",
+  "version": "v0.1.0",
   "description": "A Vue.js project",
   "author": "Patrick Braune <pabra@netzfruech.de>",
   "private": true,
