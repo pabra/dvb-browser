@@ -4,6 +4,7 @@
   "description": "A Vue.js project",
   "author": "pabra <pabra@netzfruech.de>",
   "private": true,
+  "license": "MIT",
   "scripts": {
     "dev": "node build/dev-server.js",
     "start": "npm run dev",
