@@ -2,6 +2,7 @@ import Logger from 'js-logger';
 import qs from 'querystring';
 import _ from 'lodash';
 import smst from 'sourcemapped-stacktrace';
+import packageData from '@/../package.json';
 
 const isDev = process.env && process.env.NODE_ENV === 'development';
 const qsData = qs.parse(window.location.search.replace(/^\?/, ''));
@@ -84,6 +85,7 @@ const accessLogHandler = async (messages, context) => {
         level: context.level.name,
         messages: stringifyObj(messages),
         time: new Date().toISOString(),
+        version: packageData.version,
     });
 
     try {
