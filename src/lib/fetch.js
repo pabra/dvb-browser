@@ -4,7 +4,7 @@
 import _ from 'lodash';
 import { GK4toWGS84, parseMot } from '@/lib/utils';
 import store from '@/store';
-import Logger, { stringifyObj } from '@/lib/logger';
+import Logger, { stringifyObj, errorToObject } from '@/lib/logger';
 import { ValueError, FetchError } from '@/lib/errors';
 
 const logger = Logger.get('fetch');
@@ -57,9 +57,32 @@ async function fetchJson(options) {
         fetchArgs.body = _.isPlainObject(opts.data) ? JSON.stringify(opts.data) : opts.data;
     }
 
-    logger.debug('fetch', opts);
-    const response = await fetch(opts.url, fetchArgs);
-    const json = await response.json();
+    logger.debug('fetch', Object.assign({}, opts, { password: '***' }));
+    let response;
+    try {
+        response = await fetch(opts.url, fetchArgs);
+    } catch (err) {
+        logger.error('failed to fetch', {
+            error: await errorToObject(err),
+            options: Object.assign({}, opts, { password: '***' }),
+            fetchArgs: Object.assign({}, fetchArgs, { headers: { Authorization: '***' } }),
+        });
+        response = {};
+    }
+
+    let json = null;
+    if (typeof response.json === 'function') {
+        try {
+            json = await response.json();
+        } catch (err) {
+            logger.error('failed to get JSON from response', {
+                response,
+                error: await errorToObject(err),
+                options: Object.assign({}, opts, { password: '***' }),
+                fetchArgs: Object.assign({}, fetchArgs, { headers: { Authorization: '***' } }),
+            });
+        }
+    }
     logger.debug('fetched data', json);
 
     return {

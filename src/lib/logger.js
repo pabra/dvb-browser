@@ -22,7 +22,7 @@ export function stringifyObj(obj, indent = null) {
     return str;
 }
 
-async function errorToObject(error) {
+export async function errorToObject(error) {
     const errorObj = {
         errorMessage: _.get(error, 'message'),
         errorName: _.get(error, 'name'),

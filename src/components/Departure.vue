@@ -74,7 +74,7 @@
     import { mapState } from 'vuex';
     import Stations from '@/components/Stations';
     import RouteChanges from '@/components/RouteChanges';
-    import Logger from '@/lib/logger';
+    import Logger, { errorToObject } from '@/lib/logger';
     import { vehicles, vehicleOrder, tryInt } from '@/lib/utils';
     import { fetchDeparture } from '@/lib/fetch';
 
@@ -244,7 +244,10 @@
                 try {
                     res = await fetchDeparture(this.stationId);
                 } catch (err) {
-                    this.logger.error('get departures for station', this.stationId, 'caused error', err);
+                    this.logger.error('getData cought error', {
+                        error: await errorToObject(err),
+                        stationId: this.stationId,
+                    });
                     res = {};
                 }
                 this.apiData = res;

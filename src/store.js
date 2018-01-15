@@ -2,9 +2,11 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import { getJsonStorage, vehicles, localStorageAvailable } from '@/lib/utils';
 import { fetchRouteChanges } from '@/lib/fetch';
+import Logger, { errorToObject } from '@/lib/logger';
 
 Vue.use(Vuex);
 
+const logger = Logger.get('vuex store');
 const defaultStates = {
     favoriteStations() { return []; },
     chosenVehicles() { return ['tram', 'citybus', 'cableway', 'ferry', 'hailedsharedtaxi']; },
@@ -113,7 +115,16 @@ export default new Vuex.Store({
             ) return;
 
             commit('setRouteChangesLoading', true);
-            commit('setRouteChanges', await fetchRouteChanges());
+            let res;
+            try {
+                res = await fetchRouteChanges();
+            } catch (err) {
+                logger.error('getRouteChanges cought error', {
+                    error: await errorToObject(err),
+                });
+                res = {};
+            }
+            commit('setRouteChanges', res);
             commit('setRouteChangesLoading', false);
         },
     },

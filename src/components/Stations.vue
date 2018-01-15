@@ -57,7 +57,7 @@
     import Departure from '@/components/Departure';
     import { fetchSations } from '@/lib/fetch';
     import Leaflet from '@/components/Leaflet';
-    import Logger from '@/lib/logger';
+    import Logger, { errorToObject } from '@/lib/logger';
     import { ensureInt } from '@/lib/utils';
 
     export default {
@@ -120,15 +120,18 @@
                     },
                 });
             },
-            async getStationData(value) {
+            async getData(value) {
                 this.loadingStations = true;
                 let res;
                 try {
                     res = await fetchSations(value);
                 } catch (err) {
                     this.loadingStations = false;
-                    this.logger.error('find station', value, 'caused error', err);
                     res = [];
+                    this.logger.error('getData cought error', {
+                        error: await errorToObject(err),
+                        value,
+                    });
                 }
                 this.loadingStations = false;
                 return res;
@@ -138,7 +141,7 @@
                 if (!_.isPlainObject(station)) return;
 
                 this.logger.debug('update station', station);
-                const stations = await this.getStationData(_.get(station, 'id'));
+                const stations = await this.getData(_.get(station, 'id'));
                 this.removeStation(station);
                 if (!stations.length) return;
 
@@ -153,7 +156,7 @@
                 if (!value) return;
                 if (value.length < 3) return;
 
-                this.foundStations = await this.getStationData(value);
+                this.foundStations = await this.getData(value);
             },
         },
         components: {
