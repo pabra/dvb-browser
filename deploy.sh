@@ -9,4 +9,4 @@ rsync \
     -avP \
     --delete \
     ${SYNC_SRC} \
-    $SYNC_HOST:${SYNC_DST}
+    ${SYNC_HOST}:${SYNC_DST}
