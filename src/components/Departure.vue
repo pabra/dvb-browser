@@ -39,15 +39,14 @@
                         :title="`${d.mode.title}: ${d.line}`"
                     )
                         span(
-                            :class="{ button: d.routeChangesPerLine.size }"
+                            :class="{ button: d.routeChangesPerLine.size, 'show-reroute': d.routeChangesPerLine.size && parseInt(now / 1000) % 2 }"
                             @click="onClickRouteChange(d.routeChangesPerLine)"
                         )
-                            i.material-icons(
+                            i.material-icons.vehicle-icon(
                                 v-if="vehicles[d.mode.name.toLowerCase()]"
-                                :class="{ reroute: parseInt(now / 1000) % 2 }"
-                            )
-                                | {{ vehicles[d.mode.name.toLowerCase()].ligature }}
+                            ) {{ vehicles[d.mode.name.toLowerCase()].ligature }}
                             span.vehicle(v-else) {{ d.mode.name }}
+                            i.material-icons.reroute-icon trending_down
 
                     td.line(
                         v-if="d.nextSameLine"
@@ -371,18 +370,26 @@
         border: 0 none transparent;
 
         &.vehicle {
+            .reroute-icon {
+                display: none;
+                position: absolute;
+                top: 4px;
+                left: 2px;
+                font-weight: bold;
+                transform: rotate(-45deg);
+                color: #FB8C00;
+            }
+
             .button {
                 color: inherit;
                 width: 30px;
                 overflow: hidden;
+                position: relative;
 
-                i.reroute {
-                    margin-left: -30px;
-                }
-
-                i::before {
-                    content: "directions";
-                    margin-right: 5px;
+                &.show-reroute {
+                    .reroute-icon {
+                        display: inline-block;
+                    }
                 }
             }
         }
@@ -476,6 +483,12 @@
 
             td.vehicle {
                 color: $vehicle-color;
+
+                .button.show-reroute {
+                    .vehicle-icon {
+                        color: $vehicle-color-lighter-3;
+                    }
+                }
             }
 
             td.delay, td.platform {
