@@ -101,7 +101,7 @@
             },
         },
         computed: {
-            ...mapState(['isVisible']),
+            ...mapState(['isVisible', 'isOnline']),
             departureTable() {
                 const departureCount = {};
                 const getSchama = (obj, schema) => schema.map(s => _.get(obj, s)).join('\t');
@@ -237,8 +237,13 @@
         },
         methods: {
             async getData() {
+                // do not fetch data if there is no stationId
                 if (!this.stationId) return;
+                // ... or offline
+                if (this.isOnline === false) return;
+                // ... or already/still loading
                 if (this.loading) return;
+
                 this.loading = true;
                 let res;
                 try {
@@ -299,8 +304,9 @@
         created() {
             this.getData();
             this.intervalRef = setInterval(() => {
-                // don't do anything if app is not visible
-                if (!this.$store.state.isVisible) return;
+                // don't update anything if app is not visible
+                if (!this.isVisible) return;
+                // ... or already/still loading
                 if (this.loading) return;
 
                 const now = new Date();
