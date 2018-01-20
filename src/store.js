@@ -21,6 +21,7 @@ export default new Vuex.Store({
         favoriteStations: getJsonStorage('favoriteStations', defaultStates.favoriteStations()),
         chosenVehicles: getJsonStorage('chosenVehicles', defaultStates.chosenVehicles()),
         isVisible: true,
+        isOnline: undefined,
         windowWidth: 0,
         windowHeight: 0,
         routeChanges: {},
@@ -90,6 +91,9 @@ export default new Vuex.Store({
         },
         setIsVisible(state, isVisible) {
             state.isVisible = !!isVisible;
+        },
+        setIsOnline(state, isOnline) {
+            state.isOnline = !!isOnline;
         },
         setWindowWidth(state, width) {
             state.windowWidth = width;

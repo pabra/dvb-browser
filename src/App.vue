@@ -1,5 +1,8 @@
 <template lang="pug">
     div#app
+        div#connectivity.ligature
+            i.material-icons {{ isOnlineLigature }}
+
         nav.container
             template(v-for="entry in linkedComponents")
                 router-link.button(
@@ -53,7 +56,12 @@
             };
         },
         computed: {
-            ...mapState(['isVisible']),
+            ...mapState(['isVisible', 'isOnline']),
+            isOnlineLigature() {
+                if (this.isOnline === true) return '';
+                if (this.isOnline === false) return 'signal_wifi_off';
+                return '';
+            },
         },
         methods: {
             onClickSettings() {
@@ -105,6 +113,16 @@
                 this.logger.debug('visibility changed -> isVisible', isVisible);
                 this.$store.commit('setIsVisible', isVisible);
             },
+            handleConnectivityChange(event = {}) {
+                window.console.log('event', event);
+                const { type } = event;
+                const { onLine } = navigator;
+                this.logger.debug('connectivity changed', { type, onLine });
+                if ((type === 'online' && onLine !== true) || (type === 'offline' && onLine !== false)) {
+                    this.logger.warn('eventType/onLine mismatch', { type, onLine });
+                }
+                this.$store.commit('setIsOnline', onLine);
+            },
         },
         created() {
             window.appReady = true;
@@ -150,6 +168,7 @@
 
                 this.getWindowDimension();
 
+                // handle visibility event
                 if (typeof document.hidden !== 'undefined') { // Opera 12.10 and Firefox 18 and later support
                     this.hiddenAttr = 'hidden';
                     this.visibilityChange = 'visibilitychange';
@@ -168,12 +187,23 @@
                     );
                     this.handleVisibilityChange();
                 }
+
+                // handle online event
+                if (_.isBoolean(navigator.onLine)) {
+                    window.addEventListener('online', this.handleConnectivityChange, false);
+                    window.addEventListener('offline', this.handleConnectivityChange, false);
+                    this.handleConnectivityChange();
+                }
             });
         },
         beforeDestroy() {
             window.removeEventListener('resize', this.getWindowDimension);
             if (this.visibilityChange) {
-                window.removeEventListener(this.visibilityChange, this.handleVisibilityChange);
+                document.removeEventListener(this.visibilityChange, this.handleVisibilityChange);
+            }
+            if (_.isBoolean(navigator.onLine)) {
+                window.removeEventListener('online', '');
+                window.removeEventListener('offline', '');
             }
         },
         components: {
@@ -199,6 +229,12 @@
     body {
         #app {
             margin-top: 10px;
+
+            #connectivity {
+                position: absolute;
+                top: 0;
+                right: 0;
+            }
 
             nav {
                 a {
