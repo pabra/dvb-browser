@@ -495,21 +495,6 @@
                 color: $vehicle-color-lighter-1;
             }
 
-            .route-changes {
-                vertical-align: middle;
-                color: $vehicle-color;
-                margin-right: 3px !important;
-                min-width: 0 !important;
-                width: 25px !important;
-                height: 25px !important;
-                line-height: 0px !important;
-                padding: 0 !important;
-
-                i {
-                    vertical-align: middle;
-                }
-            }
-
             &.arrivalIsSoon td {
                 &.direction, &.time, &.delay, &.platform {
                     font-weight: bold;
@@ -517,10 +502,6 @@
 
                 &.direction, &.time {
                     text-shadow: 0 0 15px $vehicle-color;
-
-                    .route-changes {
-                        text-shadow: none;
-                    }
                 }
 
                 &.delay, &.platform {
