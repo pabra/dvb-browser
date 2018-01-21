@@ -2,7 +2,7 @@
 // https://github.com/kiliankoe/vvo/wiki/WebAPI
 
 import _ from 'lodash';
-import { GK4toWGS84, parseMot } from '@/lib/utils';
+import { GK4toWGS84, parseMot, vehicleOrder, tryInt } from '@/lib/utils';
 import store from '@/store';
 import Logger, { stringifyObj, errorToObject } from '@/lib/logger';
 import { ValueError, FetchError } from '@/lib/errors';
@@ -203,11 +203,53 @@ export async function fetchRouteChanges() {
         throw new FetchError(`fetch route changes caused unexpected response "${stringifyObj(res)}"`);
     }
 
+    const lines = res.data.Lines.reduce((indexedLines, line) => {
+        /* eslint-disable no-param-reassign */
+        const cleanLine = {
+            id: parseInt(line.Id, 10),
+            line: line.Name,
+            mode: parseMot(line.Mot),
+        };
+
+        indexedLines[cleanLine.id] = cleanLine;
+
+        return indexedLines;
+    }, {});
+
     const routeChanges = res.data.Changes.reduce((indexedChanges, change) => {
         /* eslint-disable no-param-reassign */
+        const sortedLines = change.LineIds
+            .map(line => lines[parseInt(line, 10)])
+            .sort((a, b) => {
+                const aVehIdx = vehicleOrder.indexOf(a.mode.name);
+                const bVehIdx = vehicleOrder.indexOf(b.mode.name);
+                if (aVehIdx < bVehIdx) return -1;
+                if (aVehIdx > bVehIdx) return 1;
+
+                const aLine = tryInt(a.line);
+                const bLine = tryInt(b.line);
+                if (typeof aLine === 'number' && typeof bLine === 'string') return -1;
+                if (typeof aLine === 'string' && typeof bLine === 'number') return 1;
+                if (tryInt(a.line) < tryInt(b.line)) return -1;
+                if (tryInt(a.line) > tryInt(b.line)) return 1;
+
+                return 0;
+            });
+        const linesByVehicle = _.groupBy(sortedLines, line => line.mode.name);
+        const sortedByVehicle = vehicleOrder
+            .reduce((acc, vehicle) => {
+                if (vehicle in linesByVehicle) {
+                    acc.push({ vehicle, lines: linesByVehicle[vehicle] });
+                }
+
+                return acc;
+            }, []);
         const cleanChange = {
             id: parseInt(change.Id, 10),
-            lines: change.LineIds.map(line => parseInt(line, 10)),
+            lines: {
+                all: sortedLines,
+                sortedGroups: sortedByVehicle,
+            },
             title: change.Title,
             description: change.Description,
             type: change.Type,

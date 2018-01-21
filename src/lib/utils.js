@@ -174,3 +174,17 @@ export function ensureInt(value, defaultValue = 0) {
     const int = tryInt(value);
     return _.isInteger(int) ? int : defaultValue;
 }
+
+export function toLocaleDateTime(date) {
+    return date.toLocaleString(
+        'de-DE',
+        {
+            timeZone: 'Europe/Berlin',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: 'numeric',
+            minute: '2-digit',
+        },
+    );
+}

@@ -305,8 +305,6 @@
             this.intervalRef = setInterval(() => {
                 // don't update anything if app is not visible
                 if (!this.isVisible) return;
-                // ... or already/still loading
-                if (this.loading) return;
 
                 const now = new Date();
                 const minute = 60 * 1000;
@@ -405,6 +403,7 @@
         &.line,
         &.delay {
             padding-right: 8px;
+            white-space: nowrap;
         }
 
         &.time {
