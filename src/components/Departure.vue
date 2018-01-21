@@ -1,12 +1,6 @@
 <template lang="pug">
     div
-        //- Because departure times are updated every second, for some reason translations
-        //- done with v-translate are also updated every second. At least in my Chromium
-        //- browser that's the case. I expect this to be an unnecessary performance issue
-        //- specially on mobile devices.
-        h1 {{ t('_Departures') }}
-
-        p.station-name {{ apiData.city }}, {{ apiData.stop }} ({{ stationId }})
+        h1 {{ stationName }}
 
         button(
             class="reload"
@@ -17,8 +11,6 @@
             i.material-icons autorenew
 
         span.fetched {{ t('fetched') }}: {{ formatDateDiff( apiCalled - now ) }}
-
-        pre(v-if="!apiData.status || !apiData.status.Code || apiData.status.Code !== 'Ok'") {{ apiData.status }}
 
         table.u-full-width
             thead
@@ -74,7 +66,7 @@
     import Stations from '@/components/Stations';
     import RouteChanges from '@/components/RouteChanges';
     import Logger, { errorToObject } from '@/lib/logger';
-    import { vehicles, vehicleOrder, tryInt } from '@/lib/utils';
+    import { vehicles, vehicleOrder, tryInt, stationName } from '@/lib/utils';
     import { fetchDeparture } from '@/lib/fetch';
 
     export default {
@@ -233,6 +225,9 @@
                 if (this.loading) return ['loading'];
                 return [this.reloadWaitClassName];
             },
+            stationName() {
+                return stationName(this.apiData);
+            },
         },
         methods: {
             async getData() {
@@ -349,10 +344,6 @@
 
 <style lang="scss" scoped>
     @import "~@/assets/scss/variables.scss";
-
-    .station-name {
-        font-weight: bold;
-    }
 
     .fetched {
         margin-left: 10px;

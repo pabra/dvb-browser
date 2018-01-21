@@ -7,13 +7,11 @@ Vue.locales({
     // recognice, where the translations is defined (in component or global/here).
     en: {
         _About: 'About',
-        _Departures: 'Departures',
         _Settings: 'Settings',
         _Stations: 'Stations',
     },
     de: {
         _About: 'Über',
-        _Departures: 'Abfahrten',
         _Settings: 'Einstellungen',
         _Stations: 'Haltestellen',
     },

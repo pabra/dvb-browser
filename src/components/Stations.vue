@@ -18,7 +18,7 @@
                 tr(v-for="station in foundStations" :key="station.id")
                     td.station
                         a(href="#" @click.prevent="showDeparture(station)")
-                            | {{ station.city }}, {{ station.stop }}
+                            | {{ stationName(station) }}
                     td.buttons
                         button.location(@click="showLocaton(station)")
                             i.material-icons
@@ -40,7 +40,7 @@
                 )
                     td.station
                         a(href="#" @click.prevent="showDeparture(station)")
-                            | {{ station.city }}, {{ station.stop }}
+                            | {{ stationName(station) }}
                     td.buttons
                         button.location(@click="showLocaton(station)")
                             i.material-icons
@@ -58,7 +58,7 @@
     import { fetchSations } from '@/lib/fetch';
     import Leaflet from '@/components/Leaflet';
     import Logger, { errorToObject } from '@/lib/logger';
-    import { ensureInt } from '@/lib/utils';
+    import { ensureInt, stationName } from '@/lib/utils';
 
     export default {
         name: 'stations',
@@ -69,6 +69,7 @@
                 findStation: '',
                 hightlightStations: [],
                 logger: Logger.get(`${this.$options.name} component`),
+                stationName,
             };
         },
         computed: {
