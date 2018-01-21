@@ -361,7 +361,7 @@
     }
 
     .platform, .delay {
-        color: #9e9e9e;
+        color: palette(Blue Grey, 300);
     }
 
     th,
@@ -377,7 +377,7 @@
                 left: 2px;
                 font-weight: bold;
                 transform: rotate(-45deg);
-                color: #FB8C00;
+                color: $reroute-color;
             }
 
             .button {
@@ -467,18 +467,13 @@
         }
     }
 
-    @each $vehicle in tram, citybus, intercitybus, suburbanrailway, train, cableway, ferry, hailedsharedtaxi {
-        $vehicle-class: 'tr.#{$vehicle}';
-        $vehicle-bg-color: hsl(hue(map-get($vehicle-colors, '#{$vehicle}2')), 90%, 97%);
-        $vehicle-color: hsl(hue(map-get($vehicle-colors, '#{$vehicle}2')), 50%, 40%);
-        $vehicle-color-lighter-1: hsl(hue(map-get($vehicle-colors, '#{$vehicle}2')), 40%, 60%);
-        $vehicle-color-lighter-2: hsl(hue(map-get($vehicle-colors, '#{$vehicle}2')), 50%, 80%);
-        $vehicle-color-lighter-3: hsl(hue(map-get($vehicle-colors, '#{$vehicle}2')), 70%, 90%);
+    @each $vehicle in $vehicles {
+        $vehicle-color-name: vehicle-color-name($vehicle);
+        $vehicle-color: palette($vehicle-color-name, 700);
 
-        $line-bg-color: $vehicle-bg-color;
-        #{$vehicle-class} {
+        tr.#{$vehicle} {
             td {
-                background-color: $line-bg-color;
+                background-color: palette($vehicle-color-name, 50);
             }
 
             td.vehicle {
@@ -486,13 +481,13 @@
 
                 .button.show-reroute {
                     .vehicle-icon {
-                        color: $vehicle-color-lighter-3;
+                        color: palette($vehicle-color-name, 100);
                     }
                 }
             }
 
             td.delay, td.platform {
-                color: $vehicle-color-lighter-1;
+                color: palette($vehicle-color-name, 300);
             }
 
             &.arrivalIsSoon td {
@@ -512,13 +507,13 @@
 
             &.newPlatformOrDirection {
                 td {
-                    border-top: 1px solid $vehicle-color-lighter-3;
+                    border-top: 1px solid palette($vehicle-color-name, 100);
                 }
             }
 
             &.newLine {
                 td {
-                    border-top: 2px solid $vehicle-color-lighter-3;
+                    border-top: 2px solid palette($vehicle-color-name, 100);
                 }
             }
         }

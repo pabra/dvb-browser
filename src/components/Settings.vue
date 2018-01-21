@@ -98,18 +98,16 @@
         margin-right: 2px !important;
 
         &.chosen {
-            @each $vehicle in tram, citybus, intercitybus, suburbanrailway, train, cableway, ferry, hailedsharedtaxi {
-                $vehicle-bg-color: hsl(hue(map-get($vehicle-colors, '#{$vehicle}2')), 90%, 90%);
-                $vehicle-color: hsl(hue(map-get($vehicle-colors, '#{$vehicle}2')), 50%, 50%);
-
+            @each $vehicle in $vehicles {
                 &.#{$vehicle} {
-                    background-color: $vehicle-bg-color;
-                    color: $vehicle-color;
+                    background-color: palette(vehicle-color-name($vehicle), 100);
+                    color: palette(vehicle-color-name($vehicle), 700);
                 }
             }
         }
         &.ignored {
             color: #e0e0e0;
+            color: palette(Blue Grey, 100);
         }
     }
 

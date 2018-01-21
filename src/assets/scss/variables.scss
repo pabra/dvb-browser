@@ -1,3 +1,4 @@
+@import "~@/assets/scss/palette.scss";
 // This file should only contain variables
 // can be imported into other scss files by: @import "~@/assets/scss/variables.scss";
 //
@@ -8,39 +9,26 @@
 // /* eslint-disable import/no-webpack-loader-syntax, import/first */
 // import styles from 'sass-extract-loader!@/assets/scss/variables.scss';
 
-// test palettes:
-// http://paletton.com/#uid=3590u0kSyu3utNrQAL6TBofULid
-// http://paletton.com/#uid=52m0u0kI9BPmWJ1tvHUJ7r1Lsl2
+$vehicles: tram, citybus, intercitybus, suburbanrailway, train, cableway, ferry, hailedsharedtaxi;
 
-// $color1: hsl(195, 75%, 50%);
-// $color1: hsl(85, 75%, 50%);
-$color1: hsl(120, 100%, 37%);
-$color2: hsl(60, 100%, 46%);
-$color3: hsl(326, 100%, 37%);
-$color1-darker: darken($color1, 7%);
-$color3-darker: darken($color3, 7%);
-$color2-very-light: lighten($color2, 40%);
-
-$vehicle-colors: (
-    tram: #DD0B2F,
-    tram2: #f44336,
-    citybus: #005E79,
-    citybus2: #2196f3,
-    intercitybus: #005E79,
-    intercitybus2: #2196f3,
-    suburbanrailway: #009551,
-    suburbanrailway2: #4caf50,
-    train: #00A15E,
-    train2: #009688,
-    cableway: #95C11F,
-    cableway2: #8bc34a,
-    ferry: #00A5DF,
-    ferry2: #03a9f4,
-    hailedsharedtaxi: #FDC400,
-    hailedsharedtaxi2: #ffc107,
+$vehicle-color-names: (
+    tram: Red,
+    citybus: Light Blue,
+    intercitybus: Light Blue,
+    suburbanrailway: Green,
+    train: Teal,
+    cableway: Light Green,
+    ferry: Blue,
+    hailedsharedtaxi: Amber,
 );
 
-$main-color: map-get($vehicle-colors, 'citybus2');
-$main-color-lighter: lighten($main-color, 7%);
-$main-color-very-light: lighten($main-color, 40%);
-$main-color-darker: darken($main-color, 7%);
+@function vehicle-color-name($vehicle) {
+    @return map-get($vehicle-color-names, $vehicle);
+}
+
+$main-color-name: Light Blue;
+$main-color: palette($main-color-name, 500);
+$main-color-lighter: palette($main-color-name, 400);
+$main-color-very-light: palette($main-color-name, 50);
+$main-color-darker: palette($main-color-name, 800);
+$reroute-color: palette(Amber, 700);
