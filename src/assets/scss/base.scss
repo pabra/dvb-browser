@@ -62,6 +62,16 @@ textarea:focus {
     border-color: $main-color;
 }
 
+.button[disabled],
+button[disabled],
+input[disabled],
+select[disabled],
+textarea[disabled] {
+    background-color: palette(Grey, 200);
+    border-color: palette(Grey, 400);
+    color: palette(Grey, 400);
+}
+
 * {
     transition-duration: 200ms;
     transition-property: color, background-color, border-color, box-shadow, height, display, opacity, top, left;

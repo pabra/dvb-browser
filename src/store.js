@@ -112,6 +112,7 @@ export default new Vuex.Store({
     actions: {
         async getRouteChanges({ commit, state }) {
             if (
+                state.isOnline === false ||
                 state.setRouteChangesLoading || (
                     state.routeChangesFetched &&
                     new Date() - state.routeChangesFetched < 60 * 60 * 1000

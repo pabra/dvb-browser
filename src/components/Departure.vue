@@ -5,7 +5,7 @@
         button(
             class="reload"
             :class="reloadButtonClassNames"
-            :disabled="loading"
+            :disabled="loading || isOnline === false"
             @click="onReloadClicked"
         )
             i.material-icons autorenew

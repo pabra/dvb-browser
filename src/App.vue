@@ -1,7 +1,7 @@
 <template lang="pug">
     div#app
-        div#connectivity.ligature
-            i.material-icons {{ isOnlineLigature }}
+        div#connectivity.offline.ligature(v-show="isOnline === false")
+            i.material-icons signal_wifi_off
 
         nav.container
             template(v-for="entry in linkedComponents")
@@ -57,11 +57,6 @@
         },
         computed: {
             ...mapState(['isVisible', 'isOnline']),
-            isOnlineLigature() {
-                if (this.isOnline === true) return '';
-                if (this.isOnline === false) return 'signal_wifi_off';
-                return '';
-            },
         },
         methods: {
             onClickSettings() {
@@ -226,6 +221,8 @@
 </script>
 
 <style lang="scss">
+    @import "~@/assets/scss/variables.scss";
+
     body {
         #app {
             margin-top: 10px;
@@ -234,6 +231,7 @@
                 position: absolute;
                 top: 0;
                 right: 0;
+                color: palette(Red, A700);
             }
 
             nav {

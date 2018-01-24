@@ -6,6 +6,7 @@
             v-model.trim="findStation"
             :label="t('find station') + ':'"
             :debounce=500
+            :disabled="isOnline === false"
             :inputClassName="{loading: loadingStations}"
         )
 
@@ -21,8 +22,7 @@
                             | {{ stationName(station) }}
                     td.buttons
                         button.location(@click="showLocaton(station)")
-                            i.material-icons
-                                | location_on
+                            i.material-icons location_on
 
                         button.favorites.add(@click="addStation(station)" :class="{added: isFavorite(station)}")
                             i.material-icons
@@ -42,7 +42,7 @@
                         a(href="#" @click.prevent="showDeparture(station)")
                             | {{ stationName(station) }}
                     td.buttons
-                        button.location(@click="showLocaton(station)")
+                        button.location(@click="showLocaton(station)" :disabled="isOnline === false")
                             i.material-icons
                                 | location_on
 
@@ -52,7 +52,7 @@
 
 <script>
     import _ from 'lodash';
-    import { mapGetters } from 'vuex';
+    import { mapState, mapGetters } from 'vuex';
     import LabeledInput from '@/components/LabeledInput';
     import Departure from '@/components/Departure';
     import { fetchSations } from '@/lib/fetch';
@@ -74,6 +74,7 @@
         },
         computed: {
             ...mapGetters(['sortedFavoriteStations']),
+            ...mapState(['isOnline']),
             favoriteStationsToUpdate() {
                 return this.sortedFavoriteStations
                     .filter((station) => {
@@ -122,6 +123,10 @@
                 });
             },
             async getData(value) {
+                if (this.offline === false) {
+                    this.logger.debug('offine - won\'t fetch stations', value);
+                    return [];
+                }
                 this.loadingStations = true;
                 let res;
                 try {
