@@ -36,7 +36,7 @@
                 tr(
                     v-for="station of sortedFavoriteStations"
                     :key="station.id"
-                    :class="{highlight: hightlightStations.indexOf(station.id) !== -1}"
+                    :class="{highlight: highlightStations.indexOf(station.id) !== -1}"
                 )
                     td.station
                         a(href="#" @click.prevent="showDeparture(station)")
@@ -67,7 +67,7 @@
                 loadingStations: false,
                 foundStations: [],
                 findStation: '',
-                hightlightStations: [],
+                highlightStations: [],
                 logger: Logger.get(`${this.$options.name} component`),
                 stationName,
             };
@@ -91,8 +91,8 @@
         },
         methods: {
             highlight(station) {
-                this.hightlightStations.push(station.id);
-                setTimeout(() => { this.hightlightStations.shift(); }, 200);
+                this.highlightStations.push(station.id);
+                setTimeout(() => { this.highlightStations.shift(); }, 200);
             },
             addStation(station, highlight = true) {
                 this.$store.commit('addStation', station);
