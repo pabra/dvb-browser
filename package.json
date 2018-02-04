@@ -1,7 +1,15 @@
 {
   "name": "dvb-browser",
-  "version": "v0.1.1",
-  "description": "A Vue.js project",
+  "version": "v0.1.2",
+  "description": "A fast departure monitor for public transportation in Dresden.",
+  "keywords": [
+    "DVB",
+    "Dresden",
+    "public transportation",
+    "ÖPNV",
+    "departure monitor",
+    "Abfahrtsmonitor"
+  ],
   "author": "Patrick Braune <pabra@netzfruech.de>",
   "private": true,
   "license": "MIT",
