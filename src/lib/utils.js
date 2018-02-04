@@ -7,6 +7,10 @@ export function GK4toWGS84(lat, lng) {
     return proj4('GK4', 'WGS84', [lng, lat]).reverse();
 }
 
+export function WGS84toGK4(lat, lng) {
+    return proj4('WGS84', 'GK4', [lng, lat]);
+}
+
 export const vehicles = {
     tram: {
         title: 'Straßenbahn',

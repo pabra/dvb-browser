@@ -2,13 +2,22 @@
     div
         h1(v-translate=1) _Stations
 
-        LabeledInput(
-            v-model.trim="findStation"
-            :label="t('find station') + ':'"
-            :debounce=500
-            :disabled="isOnline === false"
-            :inputClassName="{loading: loadingStations}"
-        )
+        div.station-input
+            div.text-input-wrapper
+                LabeledInput(
+                    v-model.trim="findStation"
+                    :label="t('find station') + ':'"
+                    :debounce=500
+                    :disabled="isOnline === false"
+                    :inputClassName="{loading: loadingStations}"
+                )
+            div.button-input-wrapper(v-if="geolocationAvailable")
+                button(
+                    @click="onGetGeolocation"
+                    :class="{loading: loadingGeoLocation}"
+                    :disabled="isOnline === false"
+                )
+                    i.material-icons gps_not_fixed
 
         table.u-full-width(v-if="foundStations.length")
             thead
@@ -58,13 +67,14 @@
     import { fetchSations } from '@/lib/fetch';
     import Leaflet from '@/components/Leaflet';
     import Logger, { errorToObject } from '@/lib/logger';
-    import { ensureInt, stationName } from '@/lib/utils';
+    import { ensureInt, stationName, WGS84toGK4 } from '@/lib/utils';
 
     export default {
         name: 'stations',
         data() {
             return {
                 loadingStations: false,
+                loadingGeoLocation: false,
                 foundStations: [],
                 findStation: '',
                 highlightStations: [],
@@ -87,6 +97,9 @@
                         if (aTimeFetched > bTimeFetched) return 1;
                         return 0;
                     });
+            },
+            geolocationAvailable() {
+                return 'geolocation' in navigator;
             },
         },
         methods: {
@@ -153,6 +166,25 @@
 
                 this.addStation(stations[0], false);
             },
+            onGetGeolocation() {
+                this.loadingGeoLocation = true;
+                navigator.geolocation.getCurrentPosition(
+                    async (pos) => {
+                        this.loadingGeoLocation = false;
+                        const gk4 = WGS84toGK4(pos.coords.latitude, pos.coords.longitude);
+                        this.foundStations = await this.getData(`coord:${Math.round(gk4[0])}:${Math.round(gk4[1])}`);
+                    },
+                    (err) => {
+                        this.loadingGeoLocation = false;
+                        window.console.log('err', err);
+                        this.logger.error('geolocation.getCurrentPosition cought error', errorToObject(err));
+                    },
+                    {
+                        maximumAge: 15000,
+                        timeout: 10000,
+                    },
+                );
+            },
         },
         created() {
             this.updateOneStation();
@@ -185,6 +217,20 @@
 
 <style lang="scss" scoped>
     @import "~@/assets/scss/variables.scss";
+
+    .station-input {
+        display: flex;
+        flex-direction: row;
+
+        .text-input-wrapper {
+            flex: 1 1 0%;
+        }
+
+        .button-input-wrapper {
+            flex: 0 1 0%;
+            align-self: center;
+        }
+    }
 
     table {
         tr.highlight {
