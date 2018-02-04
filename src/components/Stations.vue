@@ -21,7 +21,7 @@
                         a(href="#" @click.prevent="showDeparture(station)")
                             | {{ stationName(station) }}
                     td.buttons
-                        button.location(@click="showLocaton(station)")
+                        button.location(@click="showLocaton(station)" :disabled="isOnline === false")
                             i.material-icons location_on
 
                         button.favorites.add(@click="addStation(station)" :class="{added: isFavorite(station)}")
