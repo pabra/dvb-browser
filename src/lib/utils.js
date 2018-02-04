@@ -190,7 +190,6 @@ export function toLocaleDateTime(date) {
 }
 
 export function stationName(obj) {
-    window.console.log('obj', obj);
     let str = obj.stop;
     if (obj.city !== 'Dresden') str += ` in ${obj.city}`;
     return str;

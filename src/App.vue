@@ -109,7 +109,6 @@
                 this.$store.commit('setIsVisible', isVisible);
             },
             handleConnectivityChange(event = {}) {
-                window.console.log('event', event);
                 const { type } = event;
                 const { onLine } = navigator;
                 this.logger.debug('connectivity changed', { type, onLine });
