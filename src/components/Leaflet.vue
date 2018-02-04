@@ -1,5 +1,5 @@
 <template lang="pug">
-    div.map-wrap(:style="{width: mapWidth}")
+    div.map-wrap
         v-map(:zoom="zoom" :center="center")
             v-tilelayer(url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png")
             v-marker(v-if="marker" :lat-lng="marker")
@@ -38,9 +38,6 @@
         },
         computed: {
             ...mapState(['windowWidth', 'windowHeight']),
-            mapWidth() {
-                return this.windowWidth > 500 ? `${500 - 60}px` : `${this.windowWidth - 60}px`;
-            },
         },
         created() {
             this.logger.debug('center', this.center);
@@ -59,7 +56,7 @@
     @import "~leaflet/dist/leaflet.css";
 
     .map-wrap {
-        height: 400px;
-        width: 400px;
+        height: 100%;
+        width: 100%;
     }
 </style>

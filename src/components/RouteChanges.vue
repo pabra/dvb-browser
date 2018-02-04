@@ -123,8 +123,6 @@
 <style lang="scss">
     @import "~@/assets/scss/variables.scss";
     .root.route-changes {
-        overflow: auto;
-
         table {
             $light-bg: lighten($reroute-color, 47%);
 
