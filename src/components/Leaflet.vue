@@ -45,9 +45,9 @@
             this.logger.debug('marker', this.marker);
         },
         components: {
-            'v-map': vue2leaflet.Map,
-            'v-tilelayer': vue2leaflet.TileLayer,
-            'v-marker': vue2leaflet.Marker,
+            'v-map': vue2leaflet.LMap,
+            'v-tilelayer': vue2leaflet.LTileLayer,
+            'v-marker': vue2leaflet.LMarker,
         },
     };
 </script>
