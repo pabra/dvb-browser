@@ -66,6 +66,10 @@ async function fetchJson(options) {
             error: await errorToObject(err),
             options: Object.assign({}, opts, { password: '***' }),
             fetchArgs: Object.assign({}, fetchArgs, { headers: { Authorization: '***' } }),
+            debug: {
+                isVisible: store.state.isVisible,
+                isOnline: store.state.isOnline,
+            },
         });
         response = {};
     }
