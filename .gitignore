@@ -9,6 +9,7 @@
 # Editor directories and files
 .idea
 .vscode
+.lvimrc
 
 !yarn.lock
 .npm/
