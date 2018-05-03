@@ -128,7 +128,7 @@ export async function fetchSations(query) {
                 coords: GK4toWGS84(parseInt(p[4], 10), parseInt(p[5], 10)),
                 timeFetched: Date.now(),
             };
-        });
+    });
 
     logger.debug('fetched stations', stations);
 
@@ -247,7 +247,7 @@ export async function fetchRouteChanges() {
                 }
 
                 return acc;
-            }, []);
+        }, []);
         const cleanChange = {
             id: parseInt(change.Id, 10),
             lines: {

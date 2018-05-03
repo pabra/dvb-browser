@@ -2,50 +2,58 @@
     <label :class="labelClass">
         <span class="label-body">{{ label }}</span>
 
-        <input v-if="type==='text'"
+        <input
+            v-if="type==='text'"
             ref="valueEl"
+            :class="inputClass"
+            :readonly="readonly"
+            :disabled="disabled"
+            v-model.trim="localValue"
             type="text"
             class="u-full-width"
+            @keyup.enter="emitInput"
+        >
+        <input
+            v-if="type==='url'"
+            ref="valueEl"
             :class="inputClass"
             :readonly="readonly"
             :disabled="disabled"
             v-model.trim="localValue"
-            @keyup.enter="emitInput"
-            />
-        <input v-if="type==='url'"
-            ref="valueEl"
             type="url"
             class="u-full-width"
-            :class="inputClass"
-            :readonly="readonly"
-            :disabled="disabled"
-            v-model.trim="localValue"
-            />
-        <input v-if="type==='checkbox'"
+        >
+        <input
+            v-if="type==='checkbox'"
             ref="valueEl"
-            type="checkbox"
             :class="inputClass"
             :readonly="readonly"
             :disabled="disabled"
             v-model="localValue"
-            />
-        <textarea v-if="type==='textarea'"
+            type="checkbox"
+        >
+        <textarea
+            v-if="type==='textarea'"
             ref="valueEl"
-            class="u-full-width"
             :class="inputClass"
             :readonly="readonly"
             :disabled="disabled"
             v-model.trim="localValue"
+            class="u-full-width"
             @input="autoHeight"
-            />
-        <button v-if="type==='button'"
-            type="button"
-            @click.stop.prevent="click"
-            class="button-primary"
+        />
+        <button
+            v-if="type==='button'"
             :class="inputClass"
-            >{{ value }}</button>
+            type="button"
+            class="button-primary"
+            @click.stop.prevent="click"
+        >{{ value }}</button>
 
-        <span class="message" v-show="errorMessage">{{ errorMessage }}</span>
+        <span
+            v-show="errorMessage"
+            class="message"
+        >{{ errorMessage }}</span>
     </label>
 </template>
 
@@ -53,18 +61,7 @@
     import _ from 'lodash';
 
     export default {
-        name: 'labeledInput',
-        data() {
-            return {
-                // we need to define the debouncer function here in data to have
-                // access to this.debounce prop(erty)
-                debouncer: _.debounce(
-                    this.emitInput,
-                    this.debounce,
-                ),
-                localValue: this.value,
-            };
-        },
+        name: 'LabeledInput',
         props: {
             labelClassName: {
                 type: Object,
@@ -112,6 +109,17 @@
                 default: false,
             },
         },
+        data() {
+            return {
+                // we need to define the debouncer function here in data to have
+                // access to this.debounce prop(erty)
+                debouncer: _.debounce(
+                    this.emitInput,
+                    this.debounce,
+                ),
+                localValue: this.value,
+            };
+        },
         computed: {
             labelClass() {
                 return Object.assign(
@@ -128,6 +136,13 @@
                 );
             },
         },
+        watch: {
+            value() { this.$nextTick(() => { this.autoHeight(); }); },
+            localValue() {
+                if (this.debounce) this.debouncer();
+                else this.emitInput();
+            },
+        },
         methods: {
             autoHeight() {
                 const el = this.$refs.valueEl;
@@ -138,13 +153,6 @@
             },
             emitInput() {
                 this.$emit('input', this.localValue);
-            },
-        },
-        watch: {
-            value() { this.$nextTick(() => { this.autoHeight(); }); },
-            localValue() {
-                if (this.debounce) this.debouncer();
-                else this.emitInput();
             },
         },
     };

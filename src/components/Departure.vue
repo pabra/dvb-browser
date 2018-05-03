@@ -31,7 +31,11 @@
                         :title="`${d.mode.title}: ${d.line}`"
                     )
                         span(
-                            :class="{ button: d.routeChangesPerLine.size, 'show-reroute': d.routeChangesPerLine.size && parseInt(now / 1000) % 2 }"
+                            :class=`{
+                                button: d.routeChangesPerLine.size,
+                                'show-reroute': d.routeChangesPerLine.size &&
+                                    parseInt(now / 1000) % 2,
+                            }`
                             @click="onClickRouteChange(d.routeChangesPerLine)"
                         )
                             i.material-icons.vehicle-icon(
@@ -70,7 +74,17 @@
     import { fetchDeparture } from '@/lib/fetch';
 
     export default {
-        name: 'departure',
+        name: 'Departure',
+        components: {
+            Stations,
+            RouteChanges,
+        },
+        props: {
+            stationId: {
+                type: Number,
+                default: null,
+            },
+        },
         data() {
             return {
                 stationsName: Stations.name,
@@ -84,12 +98,6 @@
                 apiCalled: null,
                 logger: Logger.get(`${this.$options.name} component`),
             };
-        },
-        props: {
-            stationId: {
-                type: Number,
-                default: null,
-            },
         },
         computed: {
             ...mapState(['isVisible', 'isOnline']),
@@ -216,7 +224,7 @@
                         }
 
                         return d;
-                    });
+                });
             },
             somePlatforms() {
                 return this.departureTable.some(d => d.platform.name);
@@ -228,6 +236,41 @@
             stationName() {
                 return stationName(this.apiData);
             },
+        },
+        watch: {
+            isVisible(value) {
+                if (value) {
+                    this.pageLoaded = new Date();
+                    this.reloadWaitClassName = 'reload-wait-60s';
+                }
+            },
+        },
+        created() {
+            this.getData();
+            this.intervalRef = setInterval(() => {
+                // don't update anything if app is not visible
+                if (!this.isVisible) return;
+
+                const now = new Date();
+                const minute = 60 * 1000;
+                if (now - this.pageLoaded > 60 * minute) {
+                    this.reloadWaitClassName = `reload-wait-${60 * 60}s`;
+                    if (now - this.apiCalled > 10 * minute) this.getData();
+                } else if (now - this.pageLoaded > 10 * minute) {
+                    this.reloadWaitClassName = `reload-wait-${10 * 60}s`;
+                    if (now - this.apiCalled > 5 * minute) this.getData();
+                } else if (now - this.apiCalled > minute) {
+                    this.reloadWaitClassName = 'reload-wait-60s';
+                    this.getData();
+                } else {
+                    this.now = now;
+                }
+            }, 1000);
+        },
+        beforeDestroy() {
+            if (this.intervalRef !== null) {
+                clearInterval(this.intervalRef);
+            }
         },
         methods: {
             async getData() {
@@ -286,45 +329,6 @@
                     },
                 });
             },
-        },
-        watch: {
-            isVisible(value) {
-                if (value) {
-                    this.pageLoaded = new Date();
-                    this.reloadWaitClassName = 'reload-wait-60s';
-                }
-            },
-        },
-        created() {
-            this.getData();
-            this.intervalRef = setInterval(() => {
-                // don't update anything if app is not visible
-                if (!this.isVisible) return;
-
-                const now = new Date();
-                const minute = 60 * 1000;
-                if (now - this.pageLoaded > 60 * minute) {
-                    this.reloadWaitClassName = `reload-wait-${60 * 60}s`;
-                    if (now - this.apiCalled > 10 * minute) this.getData();
-                } else if (now - this.pageLoaded > 10 * minute) {
-                    this.reloadWaitClassName = `reload-wait-${10 * 60}s`;
-                    if (now - this.apiCalled > 5 * minute) this.getData();
-                } else if (now - this.apiCalled > minute) {
-                    this.reloadWaitClassName = 'reload-wait-60s';
-                    this.getData();
-                } else {
-                    this.now = now;
-                }
-            }, 1000);
-        },
-        beforeDestroy() {
-            if (this.intervalRef !== null) {
-                clearInterval(this.intervalRef);
-            }
-        },
-        components: {
-            Stations,
-            RouteChanges,
         },
         locales: {
             en: {
@@ -412,7 +416,14 @@
             font-size: 26px;
             // use -webkit prefixes here so IE11 ignores it (can't handle it)
             // all other major browsers (even edge) can deal with the prefix
-            background-image: -webkit-linear-gradient(315deg, $main-color 0%,$main-color-darker 50%,$main-color-lighter 51%,$main-color 100%);
+            background-image:
+                -webkit-linear-gradient(
+                    315deg,
+                    $main-color 0%,
+                    $main-color-darker 50%,
+                    $main-color-lighter 51%,
+                    $main-color 100%,
+                );
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }

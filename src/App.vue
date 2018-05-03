@@ -37,7 +37,11 @@
     import Overlay from '@/components/Overlay';
 
     export default {
-        name: 'app',
+        name: 'App',
+        components: {
+            Settings,
+            Overlay,
+        },
         data() {
             return {
                 linkedComponents: [
@@ -58,64 +62,16 @@
         computed: {
             ...mapState(['isVisible', 'isOnline']),
         },
-        methods: {
-            onClickSettings() {
-                this.showOverlay = _.isNull(this.showOverlay) ? this.showOverlay = Settings : null;
+        watch: {
+            $route(to) {
+                if (to.params.lang) this.setLang(to.params.lang);
+                this.setHrefLang(to);
             },
-            isActive(component) {
-                if (component.name === this.$route.name) return ['button-primary'];
-                return [];
-            },
-            setLang(lang) {
-                this.$translate.setLang(lang);
-                document.querySelector('html').setAttribute('lang', lang);
-            },
-            setHrefLang(route) {
-                const langDefault = document.querySelector('link[hreflang=x-default]');
-                const langDe = document.querySelector('link[hreflang=de]');
-                const langEn = document.querySelector('link[hreflang=en]');
-                const routeDefault = this.$router.resolve({
-                    name: route.name,
-                    params: Object.assign({}, route.params, { lang: undefined }),
-                });
-                const routeDe = this.$router.resolve({
-                    name: route.name,
-                    params: Object.assign({}, route.params, { lang: 'de' }),
-                });
-                const routeEn = this.$router.resolve({
-                    name: route.name,
-                    params: Object.assign({}, route.params, { lang: 'en' }),
-                });
-                langDefault.href = _.get(routeDefault, 'href', '');
-                langDe.href = _.get(routeDe, 'href', '');
-                langEn.href = _.get(routeEn, 'href', '');
-            },
-            onOverlayDestroy() {
-                this.showOverlay = null;
-            },
-            onShowOverlay(component, props = null) {
-                this.logger.debug('overlay component', (component && component.name) || component);
-                this.logger.debug('overlay props', props);
-                this.showOverlay = component;
-                this.overlayProps = props;
-            },
-            getWindowDimension() {
-                this.$store.commit('setWindowWidth', document.documentElement.clientWidth);
-                this.$store.commit('setWindowHeight', document.documentElement.clientHeight);
-            },
-            handleVisibilityChange() {
-                const isVisible = !document[this.hiddenAttr];
-                this.logger.debug('visibility changed -> isVisible', isVisible);
-                this.$store.commit('setIsVisible', isVisible);
-            },
-            handleConnectivityChange(event = {}) {
-                const { type } = event;
-                const { onLine } = navigator;
-                this.logger.debug('connectivity changed', { type, onLine });
-                if ((type === 'online' && onLine !== true) || (type === 'offline' && onLine !== false)) {
-                    this.logger.warn('eventType/onLine mismatch', { type, onLine });
+            isVisible(visible) {
+                // reload the app after 24 hours
+                if (visible && new Date() - this.appLoaded > 24 * 60 * 60 * 1000) {
+                    window.location.reload();
                 }
-                this.$store.commit('setIsOnline', onLine);
             },
         },
         created() {
@@ -200,20 +156,64 @@
                 window.removeEventListener('offline', '');
             }
         },
-        components: {
-            Settings,
-            Overlay,
-        },
-        watch: {
-            $route(to) {
-                if (to.params.lang) this.setLang(to.params.lang);
-                this.setHrefLang(to);
+        methods: {
+            onClickSettings() {
+                this.showOverlay = _.isNull(this.showOverlay) ? this.showOverlay = Settings : null;
             },
-            isVisible(visible) {
-                // reload the app after 24 hours
-                if (visible && new Date() - this.appLoaded > 24 * 60 * 60 * 1000) {
-                    window.location.reload();
+            isActive(component) {
+                if (component.name === this.$route.name) return ['button-primary'];
+                return [];
+            },
+            setLang(lang) {
+                this.$translate.setLang(lang);
+                document.querySelector('html').setAttribute('lang', lang);
+            },
+            setHrefLang(route) {
+                const langDefault = document.querySelector('link[hreflang=x-default]');
+                const langDe = document.querySelector('link[hreflang=de]');
+                const langEn = document.querySelector('link[hreflang=en]');
+                const routeDefault = this.$router.resolve({
+                    name: route.name,
+                    params: Object.assign({}, route.params, { lang: undefined }),
+                });
+                const routeDe = this.$router.resolve({
+                    name: route.name,
+                    params: Object.assign({}, route.params, { lang: 'de' }),
+                });
+                const routeEn = this.$router.resolve({
+                    name: route.name,
+                    params: Object.assign({}, route.params, { lang: 'en' }),
+                });
+                langDefault.href = _.get(routeDefault, 'href', '');
+                langDe.href = _.get(routeDe, 'href', '');
+                langEn.href = _.get(routeEn, 'href', '');
+            },
+            onOverlayDestroy() {
+                this.showOverlay = null;
+            },
+            onShowOverlay(component, props = null) {
+                this.logger.debug('overlay component', (component && component.name) || component);
+                this.logger.debug('overlay props', props);
+                this.showOverlay = component;
+                this.overlayProps = props;
+            },
+            getWindowDimension() {
+                this.$store.commit('setWindowWidth', document.documentElement.clientWidth);
+                this.$store.commit('setWindowHeight', document.documentElement.clientHeight);
+            },
+            handleVisibilityChange() {
+                const isVisible = !document[this.hiddenAttr];
+                this.logger.debug('visibility changed -> isVisible', isVisible);
+                this.$store.commit('setIsVisible', isVisible);
+            },
+            handleConnectivityChange(event = {}) {
+                const { type } = event;
+                const { onLine } = navigator;
+                this.logger.debug('connectivity changed', { type, onLine });
+                if ((type === 'online' && onLine !== true) || (type === 'offline' && onLine !== false)) {
+                    this.logger.warn('eventType/onLine mismatch', { type, onLine });
                 }
+                this.$store.commit('setIsOnline', onLine);
             },
         },
     };

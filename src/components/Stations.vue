@@ -30,10 +30,12 @@
                         a(href="#" @click.prevent="showDeparture(station)")
                             | {{ stationName(station) }}
                     td.buttons
-                        button.location(@click="showLocaton(station)" :disabled="isOnline === false")
+                        button.location(@click="showLocaton(station)"
+                                :disabled="isOnline === false")
                             i.material-icons location_on
 
-                        button.favorites.add(@click="addStation(station)" :class="{added: isFavorite(station)}")
+                        button.favorites.add(@click="addStation(station)"
+                                :class="{added: isFavorite(station)}")
                             i.material-icons
 
         table.u-full-width(v-if="sortedFavoriteStations.length")
@@ -51,7 +53,8 @@
                         a(href="#" @click.prevent="showDeparture(station)")
                             | {{ stationName(station) }}
                     td.buttons
-                        button.location(@click="showLocaton(station)" :disabled="isOnline === false")
+                        button.location(@click="showLocaton(station)"
+                                :disabled="isOnline === false")
                             i.material-icons
                                 | location_on
 
@@ -70,7 +73,11 @@
     import { ensureInt, stationName, WGS84toGK4 } from '@/lib/utils';
 
     export default {
-        name: 'stations',
+        name: 'Stations',
+        components: {
+            LabeledInput,
+            Leaflet,
+        },
         data() {
             return {
                 loadingStations: false,
@@ -96,11 +103,22 @@
                         if (aTimeFetched < bTimeFetched) return -1;
                         if (aTimeFetched > bTimeFetched) return 1;
                         return 0;
-                    });
+                });
             },
             geolocationAvailable() {
                 return 'geolocation' in navigator;
             },
+        },
+        watch: {
+            async findStation(value) {
+                if (!value) return;
+                if (value.length < 3) return;
+
+                this.foundStations = await this.getData(value);
+            },
+        },
+        created() {
+            this.updateOneStation();
         },
         methods: {
             highlight(station) {
@@ -185,21 +203,6 @@
                     },
                 );
             },
-        },
-        created() {
-            this.updateOneStation();
-        },
-        watch: {
-            async findStation(value) {
-                if (!value) return;
-                if (value.length < 3) return;
-
-                this.foundStations = await this.getData(value);
-            },
-        },
-        components: {
-            LabeledInput,
-            Leaflet,
         },
         locales: {
             en: {

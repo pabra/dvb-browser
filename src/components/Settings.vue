@@ -35,7 +35,7 @@
     import { vehicles, vehicleOrder } from '@/lib/utils';
 
     export default {
-        name: 'settings',
+        name: 'Settings',
         data() {
             return {
                 vehicles,

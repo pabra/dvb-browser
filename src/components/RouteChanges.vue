@@ -48,7 +48,13 @@
     import { vehicles, toLocaleDateTime } from '@/lib/utils';
 
     export default {
-        name: 'routeChanges',
+        name: 'RouteChanges',
+        props: {
+            props: {
+                type: Object,
+                default: () => ({}),
+            },
+        },
         data() {
             return {
                 ids: this.props.ids || [],
@@ -56,12 +62,6 @@
                 vehicles,
                 toLocaleDateTime,
             };
-        },
-        props: {
-            props: {
-                type: Object,
-                default: () => ({}),
-            },
         },
         computed: {
             ...mapState(['routeChanges', 'routeChangesLoading', 'windowHeight']),
@@ -80,6 +80,9 @@
                 return `${heightInt}px`;
             },
         },
+        created() {
+            this.$store.dispatch('getRouteChanges');
+        },
         methods: {
             joinLines(lines) {
                 return lines.map(line => line.line).join(', ');
@@ -95,9 +98,6 @@
                         return type;
                 }
             },
-        },
-        created() {
-            this.$store.dispatch('getRouteChanges');
         },
         locales: {
             en: {
@@ -182,8 +182,12 @@
 
                     &.description {
                         td {
-                            // background: linear-gradient(to bottom, $light-bg, $light-bg 80%, transparent);
-                            background: linear-gradient(to top, transparent, $light-bg 40px, $light-bg);
+                            background: linear-gradient(
+                                to top,
+                                transparent,
+                                $light-bg 40px,
+                                $light-bg,
+                            );
                             border-bottom: none;
                         }
 

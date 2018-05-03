@@ -20,7 +20,7 @@
     import packageData from '@/../package.json';
 
     export default {
-        name: 'about',
+        name: 'About',
         data() {
             return {
                 metaData: [

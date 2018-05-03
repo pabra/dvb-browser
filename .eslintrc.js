@@ -2,18 +2,20 @@
 
 module.exports = {
     root: true,
-    parser: 'babel-eslint',
     parserOptions: {
+        parser: "babel-eslint",
         sourceType: 'module'
     },
     env: {
         browser: true,
     },
-    extends: 'airbnb-base',
-    // required to lint *.vue files
+    extends: [
+        'plugin:vue/recommended',
+        'airbnb-base',
+    ],
     plugins: [
         'compat',
-        'vue'
+        'vue',
     ],
     // check if imports actually resolve
     'settings': {
@@ -25,7 +27,12 @@ module.exports = {
     },
     // add your custom rules here
     'rules': {
-        'indent': [2, 4, {'SwitchCase': 1}],
+        'indent': 0,
+        'vue/script-indent': ['error', 4, {
+            'switchCase': 1,
+            'baseIndent': 1,
+        }],
+        'vue/html-indent': ['error', 4],
         // don't require .vue extension when importing
         'import/extensions': ['error', 'always', {
             'js': 'never',

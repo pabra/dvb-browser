@@ -10,7 +10,7 @@
 
 <script>
     export default {
-        name: 'overlay',
+        name: 'Overlay',
         props: {
             component: {
                 type: Object,

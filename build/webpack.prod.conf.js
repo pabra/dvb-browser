@@ -100,20 +100,17 @@ var webpackConfig = merge(baseWebpackConfig, {
         //     to: config.build.assetsSubDirectory,
         //     ignore: ['.*']
         // }])
-        new PrerenderSpaPlugin(
-            // Absolute path to compiled SPA
-            path.join(__dirname, '../dist'),
-            // List of routes to prerender
-            ['/', '/en/about', '/de/about', '/about'],
-            {
-                postProcessHtml: function (context) {
-                    return context.html.replace(
-                        /<script[^>]+?src="([^"]*?\.chunk\.js)"[^>]*?>[^<]*?<\/script>/gi,
-                        ''
-                    );
-                },
+        new PrerenderSpaPlugin({
+            staticDir: path.join(__dirname, '../dist'),
+            routes: ['/', '/en/about', '/de/about', '/about'],
+            postProcess (renderedRoute) {
+                renderedRoute.html.replace(
+                    /<script[^>]+?src="([^"]*?\.chunk\.js)"[^>]*?>[^<]*?<\/script>/gi,
+                    ''
+                );
+                return renderedRoute;
             },
-        ),
+        }),
         new Visualizer({ filename: './stats.html' }),
     ]
 })

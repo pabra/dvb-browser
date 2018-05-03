@@ -9,7 +9,8 @@
     import { mapState } from 'vuex';
     import vue2leaflet from 'vue2-leaflet';
     import Logger from '@/lib/logger';
-    // leaflet is already dependency of vue2-leaflet - so we disable import/no-extraneous-dependencies
+    // leaflet is already dependency of vue2-leaflet
+    // so we disable import/no-extraneous-dependencies
     /* eslint-disable import/no-extraneous-dependencies */
     import iconUrl from 'leaflet/dist/images/marker-icon.png';
     import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
@@ -21,7 +22,18 @@
     L.Icon.Default.mergeOptions({ iconRetinaUrl, iconUrl, shadowUrl });
 
     export default {
-        name: 'leaflet',
+        name: 'Leaflet',
+        components: {
+            'v-map': vue2leaflet.LMap,
+            'v-tilelayer': vue2leaflet.LTileLayer,
+            'v-marker': vue2leaflet.LMarker,
+        },
+        props: {
+            props: {
+                type: Object,
+                default: () => ({}),
+            },
+        },
         data() {
             return {
                 zoom: this.props.zoom || 13,
@@ -30,12 +42,6 @@
                 logger: Logger.get(`${this.$options.name} component`),
             };
         },
-        props: {
-            props: {
-                type: Object,
-                default: () => ({}),
-            },
-        },
         computed: {
             ...mapState(['windowWidth', 'windowHeight']),
         },
@@ -43,11 +49,6 @@
             this.logger.debug('center', this.center);
             this.logger.debug('zoom', this.zoom);
             this.logger.debug('marker', this.marker);
-        },
-        components: {
-            'v-map': vue2leaflet.LMap,
-            'v-tilelayer': vue2leaflet.LTileLayer,
-            'v-marker': vue2leaflet.LMarker,
         },
     };
 </script>

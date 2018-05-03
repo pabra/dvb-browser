@@ -51,7 +51,7 @@ export default new Vuex.Store({
                     if (a.stop > b.stop) return 1;
 
                     return 0;
-                });
+            });
         },
     },
     mutations: {
@@ -113,9 +113,10 @@ export default new Vuex.Store({
         async getRouteChanges({ commit, state }) {
             if (
                 state.isOnline === false ||
-                state.setRouteChangesLoading || (
-                    state.routeChangesFetched &&
-                    new Date() - state.routeChangesFetched < 60 * 60 * 1000
+                state.setRouteChangesLoading ||
+                (
+                state.routeChangesFetched &&
+                new Date() - state.routeChangesFetched < 60 * 60 * 1000
                 )
             ) return;
 
