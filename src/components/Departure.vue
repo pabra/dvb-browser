@@ -278,6 +278,8 @@
                 if (!this.stationId) return;
                 // ... or offline
                 if (this.isOnline === false) return;
+                // ... or not visible
+                if (!this.isVisible) return;
                 // ... or already/still loading
                 if (this.loading) return;
 
