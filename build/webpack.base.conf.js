@@ -2,6 +2,7 @@ var path = require('path')
 var utils = require('./utils')
 var config = require('../config')
 var vueLoaderConfig = require('./vue-loader.conf')
+var VueLoaderPlugin = require('vue-loader/lib/plugin')
 
 function resolve(dir) {
     return path.join(__dirname, '..', dir)
@@ -26,6 +27,9 @@ module.exports = {
             '@': resolve('src'),
         }
     },
+    plugins: [
+        new VueLoaderPlugin(),
+    ],
     module: {
         rules: [
             {
@@ -41,6 +45,20 @@ module.exports = {
                 test: /\.vue$/,
                 loader: 'vue-loader',
                 options: vueLoaderConfig
+            },
+            {
+                test: /\.pug$/,
+                oneOf: [
+                    // this applies to `<template lang="pug">` in Vue components
+                    {
+                        resourceQuery: /^\?vue/,
+                        use: ['pug-plain-loader']
+                    },
+                    // this applies to pug imports inside JavaScript
+                    {
+                        use: ['raw-loader', 'pug-plain-loader']
+                    },
+                ],
             },
             {
                 test: /\.md$/,
