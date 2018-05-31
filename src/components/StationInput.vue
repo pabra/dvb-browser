@@ -16,6 +16,7 @@
                     :class="{loading: loadingStations}"
                 )
                 button(
+                    v-if="showGps"
                     :disabled="disabledAll || disabledGps"
                     :class="{loading: loadingGps}"
                 )
@@ -32,6 +33,10 @@
             value: {
                 type: String,
                 default: '',
+            },
+            showGps: {
+                type: Boolean,
+                default: false,
             },
             disabledAll: {
                 type: Boolean,

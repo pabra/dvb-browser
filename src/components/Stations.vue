@@ -8,6 +8,7 @@
             :disabledGps="loadingStations"
             :loadingStations="loadingStations"
             :loadingGps="loadingGeoLocation"
+            :showGps="geolocationAvailable"
         )
 
         table.u-full-width(v-if="foundStations.length")
