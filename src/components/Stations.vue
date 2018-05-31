@@ -2,22 +2,13 @@
     div
         h1(v-translate=1) _Stations
 
-        div.station-input
-            div.text-input-wrapper
-                LabeledInput(
-                    v-model.trim="findStation"
-                    :label="t('find station') + ':'"
-                    :debounce=500
-                    :disabled="isOnline === false"
-                    :inputClassName="{loading: loadingStations}"
-                )
-            div.button-input-wrapper(v-if="geolocationAvailable")
-                button(
-                    @click="onGetGeolocation"
-                    :class="{loading: loadingGeoLocation}"
-                    :disabled="isOnline === false"
-                )
-                    i.material-icons gps_not_fixed
+        StationInput(
+            v-model="findStation"
+            :disabledAll="isOnline === false || loadingGeoLocation"
+            :disabledGps="loadingStations"
+            :loadingStations="loadingStations"
+            :loadingGps="loadingGeoLocation"
+        )
 
         table.u-full-width(v-if="foundStations.length")
             thead
@@ -65,7 +56,7 @@
 <script>
     import _ from 'lodash';
     import { mapState, mapGetters } from 'vuex';
-    import LabeledInput from '@/components/LabeledInput';
+    import StationInput from '@/components/StationInput';
     import Departure from '@/components/Departure';
     import { fetchSations } from '@/lib/fetch';
     import Leaflet from '@/components/Leaflet';
@@ -75,7 +66,7 @@
     export default {
         name: 'Stations',
         components: {
-            LabeledInput,
+            StationInput,
             Leaflet,
         },
         data() {
@@ -211,7 +202,6 @@
             },
             de: {
                 'favorite stations': 'favorisierte Haltestellen',
-                'find station': 'Haltestelle finden',
                 'found stations': 'gefundene Haltestellen',
             },
         },
@@ -220,20 +210,6 @@
 
 <style lang="scss" scoped>
     @import "~@/assets/scss/variables.scss";
-
-    .station-input {
-        display: flex;
-        flex-direction: row;
-
-        .text-input-wrapper {
-            flex: 1 1 0%;
-        }
-
-        .button-input-wrapper {
-            flex: 0 1 0%;
-            align-self: center;
-        }
-    }
 
     table {
         tr.highlight {
