@@ -9,6 +9,7 @@
             :loadingStations="loadingStations"
             :loadingGps="loadingGeoLocation"
             :showGps="geolocationAvailable"
+            @getLocation="onGetGeolocation"
         )
 
         table.u-full-width(v-if="foundStations.length")

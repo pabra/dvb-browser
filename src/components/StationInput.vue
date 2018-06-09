@@ -19,6 +19,7 @@
                     v-if="showGps"
                     :disabled="disabledAll || disabledGps"
                     :class="{loading: loadingGps}"
+                    @click="onGetGps"
                 )
                     i.material-icons gps_not_fixed
 </template>
@@ -78,6 +79,9 @@
         methods: {
             emitInput() {
                 this.$emit('input', this.localValue);
+            },
+            onGetGps() {
+                this.$emit('getLocation');
             },
         },
         locales: {
