@@ -75,6 +75,8 @@
             return {
                 loadingStations: false,
                 loadingGeoLocation: false,
+                locationWatchId: null,
+                getLocationTime: null,
                 foundStations: [],
                 findStation: '',
                 highlightStations: [],
@@ -112,6 +114,9 @@
         },
         created() {
             this.updateOneStation();
+        },
+        beforeDestroy() {
+            this.clearLocationWatch();
         },
         methods: {
             highlight(station) {
@@ -177,24 +182,71 @@
 
                 this.addStation(stations[0], false);
             },
+            clearLocationWatch() {
+                if (this.locationWatchId !== null) {
+                    this.logger.debug('clear location watch', this.locationWatchId);
+                    navigator.geolocation.clearWatch(this.locationWatchId);
+                    this.locationWatchId = null;
+                    this.getLocationTime = null;
+                } else {
+                    this.logger.debug('no location watcher to clear.');
+                }
+            },
             onGetGeolocation() {
                 this.loadingGeoLocation = true;
-                navigator.geolocation.getCurrentPosition(
+                this.clearLocationWatch();
+                this.getLocationTime = Date.now();
+                this.locationWatchId = navigator.geolocation.watchPosition(
                     async (pos) => {
+                        const runtime = Date.now() - this.getLocationTime;
+                        this.logger.debug(
+                            'found position',
+                            {
+                                latitude: pos.coords.latitude,
+                                longitude: pos.coords.longitude,
+                                watcher: this.locationWatchId,
+                                'runtime in ms': runtime,
+                            },
+                        );
+                        this.clearLocationWatch();
                         this.loadingGeoLocation = false;
                         const gk4 = WGS84toGK4(pos.coords.latitude, pos.coords.longitude);
                         this.foundStations = await this.getData(`coord:${Math.round(gk4[0])}:${Math.round(gk4[1])}`);
                     },
-                    (err) => {
+                    async (err) => {
+                        const runtime = Date.now() - this.getLocationTime;
+                        if (
+                            err.code
+                            && err.code === err.TIMEOUT
+                            && runtime < 30000
+                        ) {
+                            this.logger.debug(
+                                'location watcher soft timeout',
+                                {
+                                    watcher: this.locationWatchId,
+                                    'runtime in ms': runtime,
+                                },
+                            );
+                            return;
+                        }
+                        this.logger.error(
+                            'geolocation.getCurrentPosition cought error',
+                            await errorToObject(err),
+                            {
+                                watcher: this.locationWatchId,
+                                'runtime in ms': runtime,
+                            },
+                        );
+                        this.clearLocationWatch();
                         this.loadingGeoLocation = false;
-                        window.console.log('err', err);
-                        this.logger.error('geolocation.getCurrentPosition cought error', errorToObject(err));
                     },
                     {
                         maximumAge: 15000,
-                        timeout: 10000,
+                        timeout: 3000,
+                        enableHighAccuracy: false,
                     },
                 );
+                this.logger.debug('watchId', this.locationWatchId);
             },
         },
         locales: {

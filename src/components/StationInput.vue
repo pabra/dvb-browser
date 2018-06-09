@@ -81,6 +81,8 @@
                 this.$emit('input', this.localValue);
             },
             onGetGps() {
+                this.localValue = '';
+                this.emitInput();
                 this.$emit('getLocation');
             },
         },
