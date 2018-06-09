@@ -24,9 +24,9 @@ export function stringifyObj(obj, indent = null) {
 
 export async function errorToObject(error) {
     const errorObj = {
+        errorCode: _.get(error, 'code'),
         errorMessage: _.get(error, 'message'),
         errorName: _.get(error, 'name'),
-        // errorStack: _.get(error, 'stack'),
     };
     let errorStackStr = _.get(error, 'stack');
 
