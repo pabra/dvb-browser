@@ -157,23 +157,21 @@
             },
             showLocaton(station) {
                 this.logger.debug('show location of station', station);
-                this.$emit('onShowOverlay', {
-                    component: Leaflet,
-                    props: {
-                        center: station.coords,
-                        marker: station.coords,
-                        zoom: 18,
-                    },
-                });
+                this.showMapWithMarker(station.coords[0], station.coords[1]);
             },
             onShowLocationOverlay() {
                 if (this.findStationGeo === null) return;
                 this.logger.debug('show current location', this.findStationGeo);
+                this.showMapWithMarker(this.findStationGeo.latitude, this.findStationGeo.longitude);
+            },
+            showMapWithMarker(latitude, longitude) {
+                if (!_.isNumber(latitude) || !_.isNumber(longitude)) return;
+                this.logger.debug('show map with marker', latitude, longitude);
                 this.$emit('onShowOverlay', {
                     component: Leaflet,
                     props: {
-                        center: [this.findStationGeo.latitude, this.findStationGeo.longitude],
-                        marker: [this.findStationGeo.latitude, this.findStationGeo.longitude],
+                        center: [latitude, longitude],
+                        marker: [latitude, longitude],
                         zoom: 18,
                     },
                 });
