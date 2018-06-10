@@ -8,5 +8,6 @@ SYNC_HOST=dvb.peppnet.de
 rsync \
     -avP \
     --delete \
-    ${SYNC_SRC} \
-    ${SYNC_HOST}:${SYNC_DST}
+    --dry-run \
+    "${SYNC_SRC}" \
+    "${SYNC_HOST}:${SYNC_DST}"
