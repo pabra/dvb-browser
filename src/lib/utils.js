@@ -198,3 +198,25 @@ export function stationName(obj) {
     if (obj.city !== 'Dresden') str += ` in ${obj.city}`;
     return str;
 }
+
+export function coordsToGeo(latitude, longitude) {
+    if (!_.isnumber(latitude) || !_.isNumber(longitude)) return null;
+    const precision = 4;
+    const div = 10 ** precision;
+    const rndLat = Math.round(latitude * div) / div;
+    const rndLong = Math.round(longitude * div) / div;
+
+    return `geo:${rndLat},${rndLong}`;
+}
+
+const coordRegex = /(?:\+|-)?\d+(?:\.\d+)?/;
+const geoRegex = new RegExp(`^geo:(${coordRegex.source}),(${coordRegex.source})$`);
+export function parseGeo(geo) {
+    const match = geo.match(geoRegex);
+    if (!match) return null;
+    const latitude = parseFloat(match[1]);
+    const longitude = parseFloat(match[2]);
+    if (!_.isNumber(latitude) || !_.isNumber(longitude)) return null;
+
+    return { latitude, longitude };
+}

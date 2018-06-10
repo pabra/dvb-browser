@@ -12,10 +12,18 @@
                     name="stationName"
                     class="u-full-width"
                     @keyup.enter="emitInput"
+                    @focus="$event.target.select()"
                     :disabled="disabledAll"
                     :class="{loading: loadingStations}"
                 )
-                button(
+
+                button.showLocation(
+                    v-if="showLocation"
+                    @click="onShowLocation"
+                )
+                    i.material-icons location_on
+
+                button.getLocation(
                     v-if="showGps"
                     :disabled="disabledAll || disabledGps"
                     :class="{loading: loadingGps}"
@@ -36,6 +44,10 @@
                 default: '',
             },
             showGps: {
+                type: Boolean,
+                default: false,
+            },
+            showLocation: {
                 type: Boolean,
                 default: false,
             },
@@ -85,6 +97,9 @@
                 this.emitInput();
                 this.$emit('getLocation');
             },
+            onShowLocation() {
+                this.$emit('showLocationOverlay');
+            },
         },
         locales: {
             en: {
@@ -106,8 +121,15 @@
     button {
         background-color: #fff;
         position: absolute;
-        right: 4px;
         top: 4px;
+    }
+
+    button.getLocation {
+        right: 4px;
+    }
+
+    button.showLocation {
+        right: 36px;
     }
 
     input[disabled],

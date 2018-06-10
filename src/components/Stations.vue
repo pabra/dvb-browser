@@ -9,7 +9,9 @@
             :loadingStations="loadingStations"
             :loadingGps="loadingGeoLocation"
             :showGps="geolocationAvailable"
+            :showLocation="findStationGeo !== null"
             @getLocation="onGetGeolocation"
+            @showLocationOverlay="onShowLocationOverlay"
         )
 
         table.u-full-width(v-if="foundStations.length")
@@ -63,7 +65,7 @@
     import { fetchSations } from '@/lib/fetch';
     import Leaflet from '@/components/Leaflet';
     import Logger, { errorToObject } from '@/lib/logger';
-    import { ensureInt, stationName, WGS84toGK4 } from '@/lib/utils';
+    import { ensureInt, stationName, WGS84toGK4, coordsToGeo, parseGeo } from '@/lib/utils';
 
     export default {
         name: 'Stations',
@@ -77,6 +79,7 @@
                 loadingGeoLocation: false,
                 locationWatchId: null,
                 getLocationTime: null,
+                findStationGeo: null,
                 foundStations: [],
                 findStation: '',
                 highlightStations: [],
@@ -106,10 +109,22 @@
         },
         watch: {
             async findStation(value) {
+                this.findStationGeo = null;
                 if (!value) return;
                 if (value.length < 3) return;
-
-                this.foundStations = await this.getData(value);
+                if (_.startsWith(value, 'geo:')) {
+                    const parsedGeo = parseGeo(value);
+                    if (parsedGeo === null) return;
+                    this.logger.debug('parsedGeo', parsedGeo);
+                    this.findStationGeo = parsedGeo;
+                    const gk4 = WGS84toGK4(parsedGeo.latitude, parsedGeo.longitude);
+                    this.logger.debug('gk4', gk4);
+                    const coord = `coord:${Math.round(gk4[0])}:${Math.round(gk4[1])}`;
+                    this.logger.debug('coord', coord);
+                    this.foundStations = await this.getData(coord);
+                } else {
+                    this.foundStations = await this.getData(value);
+                }
             },
         },
         created() {
@@ -147,6 +162,18 @@
                     props: {
                         center: station.coords,
                         marker: station.coords,
+                        zoom: 18,
+                    },
+                });
+            },
+            onShowLocationOverlay() {
+                if (this.findStationGeo === null) return;
+                this.logger.debug('show current location', this.findStationGeo);
+                this.$emit('onShowOverlay', {
+                    component: Leaflet,
+                    props: {
+                        center: [this.findStationGeo.latitude, this.findStationGeo.longitude],
+                        marker: [this.findStationGeo.latitude, this.findStationGeo.longitude],
                         zoom: 18,
                     },
                 });
@@ -199,19 +226,22 @@
                 this.locationWatchId = navigator.geolocation.watchPosition(
                     async (pos) => {
                         const runtime = Date.now() - this.getLocationTime;
+                        const { latitude } = pos.coords;
+                        const { longitude } = pos.coords;
+                        const geo = coordsToGeo(pos.coords.latitude, pos.coords.longitude);
                         this.logger.debug(
                             'found position',
                             {
-                                latitude: pos.coords.latitude,
-                                longitude: pos.coords.longitude,
+                                latitude,
+                                longitude,
+                                geo,
                                 watcher: this.locationWatchId,
                                 'runtime in ms': runtime,
                             },
                         );
                         this.clearLocationWatch();
                         this.loadingGeoLocation = false;
-                        const gk4 = WGS84toGK4(pos.coords.latitude, pos.coords.longitude);
-                        this.foundStations = await this.getData(`coord:${Math.round(gk4[0])}:${Math.round(gk4[1])}`);
+                        this.findStation = geo;
                     },
                     async (err) => {
                         const runtime = Date.now() - this.getLocationTime;
