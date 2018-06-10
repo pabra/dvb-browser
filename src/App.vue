@@ -256,8 +256,8 @@
             main {
                 button, .button {
                     height: 30px;
-                    line-height: 26px;
-                    padding: 0 2px;
+                    line-height: 20px;
+                    padding: 2px;
                     margin: 0;
                     min-width: 30px;
 
