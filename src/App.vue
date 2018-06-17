@@ -31,6 +31,7 @@
     import _ from 'lodash';
     import { mapState } from 'vuex';
     import Logger from '@/lib/logger';
+    import { localStorageAvailable } from '@/lib/utils';
     import Stations from '@/components/Stations';
     import About from '@/components/About';
     import Settings from '@/components/Settings';
@@ -87,7 +88,7 @@
                 lang = this.$route.params.lang;
                 storeLang = true;
             } else {
-                lang = this.$store.state.localStorageAvailable ? localStorage.getItem('language') : null;
+                lang = localStorageAvailable ? localStorage.getItem('language') : null;
             }
 
             if (['de', 'en'].indexOf(lang) === -1) {
@@ -104,10 +105,10 @@
 
             this.setLang(lang);
 
-            if (storeLang && this.$store.state.localStorageAvailable) localStorage.setItem('language', lang);
+            if (storeLang && localStorageAvailable) localStorage.setItem('language', lang);
 
             this.$translate.$on('language:changed', (language) => {
-                if (!this.$store.state.localStorageAvailable) return;
+                if (!localStorageAvailable) return;
                 localStorage.setItem('language', language);
             });
             this.setHrefLang(this.$route);

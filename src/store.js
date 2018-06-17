@@ -27,8 +27,6 @@ export default new Vuex.Store({
         routeChanges: {},
         routeChangesLoading: false,
         routeChangesFetched: null,
-        // localStorage might not be available eg. android browser runs in private mode
-        localStorageAvailable: localStorageAvailable(),
     },
     getters: {
         chosenMots(state) {
@@ -60,32 +58,32 @@ export default new Vuex.Store({
             const idx = state.favoriteStations.findIndex(s => s.id === station.id);
             if (idx > -1) return;
             state.favoriteStations.push(station);
-            if (!state.localStorageAvailable) return;
+            if (!localStorageAvailable) return;
             localStorage.setItem('favoriteStations', JSON.stringify(state.favoriteStations));
         },
         removeStation(state, station) {
             const idx = state.favoriteStations.findIndex(s => s.id === station.id);
             if (idx === -1) return;
             state.favoriteStations.splice(idx, 1);
-            if (!state.localStorageAvailable) return;
+            if (!localStorageAvailable) return;
             localStorage.setItem('favoriteStations', JSON.stringify(state.favoriteStations));
         },
         addVehicle(state, vehicle) {
             const idx = state.chosenVehicles.indexOf(vehicle);
             if (idx > -1) return;
             state.chosenVehicles.push(vehicle);
-            if (!state.localStorageAvailable) return;
+            if (!localStorageAvailable) return;
             localStorage.setItem('chosenVehicles', JSON.stringify(state.chosenVehicles));
         },
         removeVehicle(state, vehicle) {
             const idx = state.chosenVehicles.indexOf(vehicle);
             if (idx === -1) return;
             state.chosenVehicles.splice(idx, 1);
-            if (!state.localStorageAvailable) return;
+            if (!localStorageAvailable) return;
             localStorage.setItem('chosenVehicles', JSON.stringify(state.chosenVehicles));
         },
         clearStorage(state) {
-            if (state.localStorageAvailable) localStorage.clear();
+            if (localStorageAvailable) localStorage.clear();
             state.favoriteStations = defaultStates.favoriteStations();
             state.chosenVehicles = defaultStates.chosenVehicles();
         },

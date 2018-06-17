@@ -118,7 +118,7 @@ export function parseMode(id) {
     return undefined;
 }
 
-export function localStorageAvailable() {
+function testLocalStorageAvailable() {
     const storage = window.localStorage;
     const x = '__storage_test__';
     try {
@@ -141,8 +141,11 @@ export function localStorageAvailable() {
     }
 }
 
+// localStorage might not be available eg. android browser runs in private mode
+export const localStorageAvailable = testLocalStorageAvailable();
+
 export function getJsonStorage(storageKey, defaultValue = null) {
-    const value = localStorageAvailable() ? localStorage.getItem(storageKey) : null;
+    const value = localStorageAvailable ? localStorage.getItem(storageKey) : null;
     if (value === null) return defaultValue;
 
     let jsonValue;
