@@ -161,7 +161,6 @@
                         return 0;
                     })
                     .map((d) => {
-                        /* eslint-disable no-param-reassign */
                         if (d.delayTime > 0) d.delayTimeStr = `+${d.delayTime}′`;
                         else if (d.delayTime < 0) d.delayTimeStr = `-${d.delayTime}′`;
                         else d.delayTimeStr = '';
@@ -321,13 +320,14 @@
                 this.getData();
             },
             onClickRouteChange(ids) {
-                if (_.isSet(ids)) ids = [...ids];
-                this.logger.debug('click route change ids', ids);
-                if (!ids.length) return;
+                const idArray = _.isSet(ids) ? [...ids] : ids;
+                this.logger.debug('ids', idArray);
+                this.logger.debug('click route change ids', idArray);
+                if (!idArray.length) return;
                 this.$emit('onShowOverlay', {
                     component: RouteChanges,
                     props: {
-                        ids,
+                        ids: idArray,
                     },
                 });
             },

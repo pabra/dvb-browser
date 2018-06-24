@@ -56,7 +56,6 @@ export default new Vuex.Store({
         },
     },
     mutations: {
-        /* eslint-disable no-param-reassign */
         addStation(state, station) {
             const idx = state.favoriteStations.findIndex(s => s.id === station.id);
             if (idx > -1) return;

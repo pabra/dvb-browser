@@ -208,7 +208,6 @@ export async function fetchRouteChanges() {
     }
 
     const lines = res.data.Lines.reduce((indexedLines, line) => {
-        /* eslint-disable no-param-reassign */
         const cleanLine = {
             id: parseInt(line.Id, 10),
             line: line.Name,
@@ -221,7 +220,6 @@ export async function fetchRouteChanges() {
     }, {});
 
     const routeChanges = res.data.Changes.reduce((indexedChanges, change) => {
-        /* eslint-disable no-param-reassign */
         const sortedLines = change.LineIds
             .map(line => lines[parseInt(line, 10)])
             .sort((a, b) => {

@@ -28,6 +28,7 @@ module.exports = {
     // add your custom rules here
     'rules': {
         'indent': 0,
+        'no-param-reassign': ['error', { 'props': false }],
         'vue/script-indent': ['error', 4, {
             'switchCase': 1,
             'baseIndent': 1,
