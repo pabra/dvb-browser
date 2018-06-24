@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 import { getJsonStorage, vehicles, localStorageAvailable } from '@/lib/utils';
 import { fetchRouteChanges } from '@/lib/fetch';
 import Logger, { errorToObject } from '@/lib/logger';
+import { ValueError } from '@/lib/errors';
 
 Vue.use(Vuex);
 
@@ -27,6 +28,8 @@ export default new Vuex.Store({
         routeChanges: {},
         routeChangesLoading: false,
         routeChangesFetched: null,
+        messageNextId: 0,
+        messages: [],
     },
     getters: {
         chosenMots(state) {
@@ -106,6 +109,24 @@ export default new Vuex.Store({
             state.routeChanges = changes;
             state.routeChangesFetched = new Date();
         },
+        messageAdd(state, message) {
+            if (!message.text) throw new ValueError('no empty messages allowed');
+            if (typeof message.setRemoveTimeout !== 'function') throw new TypeError('message lacks setRemoveTimeout function');
+            if (typeof message.remove !== 'function') throw new TypeError('message lacks remove function');
+            if (['info', 'warning', 'error'].indexOf(message.level) === -1) {
+                throw new ValueError(`unknown message level: ${message.level}`);
+            }
+            message.id = state.messageNextId;
+            state.messages.push(message);
+            state.messageNextId += 1;
+        },
+        messageRemove(state, msg) {
+            const idx = state.messages.indexOf(msg);
+            if (idx === -1) return;
+            msg.remove();
+            state.messages.splice(idx, 1);
+            logger.debug('stored messages left', state.messages.length);
+        },
     },
     actions: {
         async getRouteChanges({ commit, state }) {
@@ -130,6 +151,38 @@ export default new Vuex.Store({
             }
             commit('setRouteChanges', res);
             commit('setRouteChangesLoading', false);
+        },
+        messageAddAndReturn({ commit }, data) {
+            let removeTimeout = null;
+            let removed = false;
+            const message = Object.assign(
+                {
+                    text: '',
+                    subject: null,
+                    level: 'info',
+                    timeToDisplay: 20000,
+                },
+                data,
+                {
+                    setRemoveTimeout() {
+                        if (removeTimeout !== null) return;
+                        if (!message.timeToDisplay) return;
+                        removeTimeout = setTimeout(message.remove, message.timeToDisplay);
+                    },
+                    remove() {
+                        if (removeTimeout) {
+                            clearTimeout(removeTimeout);
+                            removeTimeout = null;
+                        }
+                        if (removed) return;
+                        removed = true;
+                        commit('messageRemove', message);
+                    },
+                },
+            );
+            commit('messageAdd', message);
+
+            return message;
         },
     },
 });

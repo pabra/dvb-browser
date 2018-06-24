@@ -25,6 +25,7 @@
                 :props="overlayProps"
                 @destroy="onOverlayDestroy"
             )
+            Messages
 </template>
 
 <script>
@@ -36,12 +37,14 @@
     import About from '@/components/About';
     import Settings from '@/components/Settings';
     import Overlay from '@/components/Overlay';
+    import Messages from '@/components/Messages';
 
     export default {
         name: 'App',
         components: {
             Settings,
             Overlay,
+            Messages,
         },
         data() {
             return {
