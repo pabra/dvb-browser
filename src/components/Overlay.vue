@@ -85,8 +85,11 @@
         }
     }
 
-    .overlay-enter, .overlay-leave-active {
+    .overlay-enter-active, .overlay-leave-active {
+        transition: all 300ms;
+    }
+    .overlay-enter, .overlay-leave-to {
         opacity: 0;
-        top: -200px !important;
+        transform: translateY(-300px);
     }
 </style>

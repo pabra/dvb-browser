@@ -302,14 +302,14 @@
         }
 
         tr.list-move {
-            transition: all 500ms;
+            transition: all 300ms;
         }
 
         tr.list-enter, .list-leave-to {
             opacity: 0;
             transform: translateX(-30px);
         }
-        tr.list-leave, tr.list-leave-active {
+        tr.list-leave-active {
             position: absolute;
         }
 
