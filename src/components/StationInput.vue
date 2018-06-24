@@ -5,7 +5,7 @@
                 v-translate=1
             ).label-body
                 | find station
-            div
+            div.input-wrapper
                 input(
                     v-model.trim="localValue"
                     type="search"
@@ -114,8 +114,9 @@
 </script>
 
 <style lang="scss" scoped>
-    div {
+    div.input-wrapper {
         position: relative;
+        margin: 0 -3px 0 0;
     }
 
     button {
