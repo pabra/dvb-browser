@@ -18,7 +18,8 @@
                 i.material-icons settings
 
         main.container
-            router-view(@onShowOverlay="args => onShowOverlay(args.component, args.props)")
+            keep-alive(include="Stations,About")
+                router-view(@onShowOverlay="args => onShowOverlay(args.component, args.props)")
             Overlay(
                 v-if="!isNull(showOverlay)"
                 :component="showOverlay"
