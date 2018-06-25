@@ -11,11 +11,17 @@
                     type="search"
                     name="stationName"
                     class="u-full-width"
+                    ref="input"
                     @keyup.enter="emitInput"
                     @focus="$event.target.select()"
                     :disabled="disabledAll"
                     :class="{loading: loadingStations}"
                 )
+
+                i(
+                    v-if="localValue"
+                    @click="clear"
+                ).clear.material-icons close
 
                 button.showLocation(
                     v-if="showLocation"
@@ -100,6 +106,11 @@
             onShowLocation() {
                 this.$emit('showLocationOverlay');
             },
+            clear() {
+                this.localValue = '';
+                this.$refs.input.focus();
+                this.$emit('clear');
+            },
         },
         locales: {
             en: {
@@ -116,25 +127,34 @@
 <style lang="scss" scoped>
     div.input-wrapper {
         position: relative;
-        margin: 0 -3px 0 0;
+        margin: 0 -18px 0 0;
+
+        .clear {
+            color: black;
+            position: absolute;
+            top: 10px;
+            right: 0;
+            font-size: 14pt;
+        }
+
+        button {
+            background-color: #fff;
+            position: absolute;
+            top: 4px;
+
+            &.getLocation {
+                right: 18px;
+            }
+
+            &.showLocation {
+                right: 50px;
+            }
+        }
+
+        input[disabled],
+        button[disabled] {
+            background-color: #EEE;
+        }
     }
 
-    button {
-        background-color: #fff;
-        position: absolute;
-        top: 4px;
-    }
-
-    button.getLocation {
-        right: 4px;
-    }
-
-    button.showLocation {
-        right: 36px;
-    }
-
-    input[disabled],
-    button[disabled] {
-        background-color: #EEE;
-    }
 </style>

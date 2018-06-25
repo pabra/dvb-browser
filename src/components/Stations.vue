@@ -12,6 +12,7 @@
             :showLocation="findStationGeo !== null"
             @getLocation="onGetGeolocation"
             @showLocationOverlay="onShowLocationOverlay"
+            @clear="foundStations=[]"
         )
 
         table.u-full-width(v-if="foundStations.length")
