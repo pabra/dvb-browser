@@ -27,6 +27,7 @@ function browserSupportsAllFeatures() {
         typeof window.fetch === 'function' &&
         typeof window.Promise === 'function' &&
         typeof Object.assign === 'function' &&
+        typeof Array.prototype.every === 'function' &&
         typeof Array.prototype.find === 'function' &&
         typeof Array.prototype.findIndex === 'function' &&
         typeof String.prototype.startsWith === 'function' &&
@@ -46,6 +47,12 @@ function loadScript(done) {
 }
 
 function main(err) {
+    // Number.isFinite polyfill
+    Number.isFinite = Number.isFinite || function _isFinite(value) {
+        /* eslint-disable no-restricted-globals */
+        return typeof value === 'number' && isFinite(value);
+    };
+
     // Initiate all other code paths.
     // If there's an error loading the polyfills, handle that
     // case gracefully and track that the error occurred.

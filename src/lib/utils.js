@@ -182,6 +182,10 @@ export function ensureInt(value, defaultValue = 0) {
     return _.isInteger(int) ? int : defaultValue;
 }
 
+export function ensurePositiveFinite(num) {
+    return Number.isFinite(num) && num > 0 ? num : null;
+}
+
 export function toLocaleDateTime(date) {
     return date.toLocaleString(
         'de-DE',
@@ -202,24 +206,38 @@ export function stationName(obj) {
     return str;
 }
 
-export function coordsToGeo(latitude, longitude) {
+export function coordsToGeo(latitude, longitude, uncertainty = null) {
     if (!_.isnumber(latitude) || !_.isNumber(longitude)) return null;
     const precision = 4;
     const div = 10 ** precision;
     const rndLat = Math.round(latitude * div) / div;
     const rndLong = Math.round(longitude * div) / div;
+    let geoStr = `geo:${rndLat},${rndLong}`;
 
-    return `geo:${rndLat},${rndLong}`;
+    if (uncertainty !== null) geoStr += `;u=${Math.round(uncertainty)}`;
+    return geoStr;
 }
 
-const coordRegex = /(?:\+|-)?\d+(?:\.\d+)?/;
-const geoRegex = new RegExp(`^geo:(${coordRegex.source}),(${coordRegex.source})$`);
 export function parseGeo(geo) {
-    const match = geo.match(geoRegex);
-    if (!match) return null;
-    const latitude = parseFloat(match[1]);
-    const longitude = parseFloat(match[2]);
-    if (!_.isNumber(latitude) || !_.isNumber(longitude)) return null;
-
-    return { latitude, longitude };
+    if (!geo.startsWith('geo:')) return null;
+    const geoSplit = geo.split(':', 2);
+    if (geoSplit.length !== 2) return null;
+    let latitude;
+    let longitude;
+    let uncertainty;
+    geoSplit[1].split(';').forEach((val, idx) => {
+        if (idx === 0) {
+            // must be coordinates
+            const coords = val.split(',');
+            if (coords.length !== 2) return;
+            latitude = ensurePositiveFinite(parseFloat(coords[0]));
+            longitude = ensurePositiveFinite(parseFloat(coords[1]));
+        } else {
+            const valSplit = val.split('=', 2);
+            if (valSplit.length !== 2) return;
+            if (valSplit[0] === 'u') uncertainty = ensurePositiveFinite(parseFloat(valSplit[1]));
+        }
+    });
+    if (!latitude || !longitude) return null;
+    return { latitude, longitude, uncertainty };
 }

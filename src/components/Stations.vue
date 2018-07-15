@@ -9,7 +9,7 @@
             :loadingStations="loadingStations"
             :loadingGps="loadingGeoLocation"
             :showGps="geolocationAvailable"
-            :showLocation="findStationGeo !== null"
+            :showLocation="findStationGeo !== null || foundStations.length > 0"
             @getLocation="onGetGeolocation"
             @showLocationOverlay="onShowLocationOverlay"
             @clear="foundStations=[]"
@@ -113,7 +113,7 @@
                 this.findStationGeo = null;
                 if (!value) return;
                 if (value.length < 3) return;
-                if (_.startsWith(value, 'geo:')) {
+                if (value.startsWith('geo:')) {
                     const parsedGeo = parseGeo(value);
                     if (parsedGeo === null) return;
                     this.logger.debug('parsedGeo', parsedGeo);
@@ -158,23 +158,44 @@
             },
             showLocaton(station) {
                 this.logger.debug('show location of station', station);
-                this.showMapWithMarker(station.coords[0], station.coords[1]);
+                this.showMapWithMarkers([{
+                    latitude: station.coords[0],
+                    longitude: station.coords[1],
+                    id: station.id,
+                    type: 'station',
+                    name: station.stop,
+                }]);
             },
             onShowLocationOverlay() {
-                if (this.findStationGeo === null) return;
+                // if (this.findStationGeo === null) return;
                 this.logger.debug('show current location', this.findStationGeo);
-                this.showMapWithMarker(this.findStationGeo.latitude, this.findStationGeo.longitude);
+                const list = [];
+                if (this.findStationGeo) {
+                    list.push({
+                        latitude: this.findStationGeo.latitude,
+                        longitude: this.findStationGeo.longitude,
+                        accuracy: this.findStationGeo.uncertainty,
+                        id: 0,
+                        type: 'position',
+                        name: this.t('your position'),
+                    });
+                }
+                this.foundStations.forEach((station) => {
+                    list.push({
+                        latitude: station.coords[0],
+                        longitude: station.coords[1],
+                        id: station.id,
+                        type: 'station',
+                        name: station.stop,
+                    });
+                });
+                this.showMapWithMarkers(list);
             },
-            showMapWithMarker(latitude, longitude) {
-                if (!_.isNumber(latitude) || !_.isNumber(longitude)) return;
-                this.logger.debug('show map with marker', latitude, longitude);
+            showMapWithMarkers(markers) {
+                this.logger.debug('show map with markers', markers);
                 this.$emit('onShowOverlay', {
                     component: Leaflet,
-                    props: {
-                        center: [latitude, longitude],
-                        marker: [latitude, longitude],
-                        zoom: 18,
-                    },
+                    props: { markers },
                 });
             },
             async getData(value) {
@@ -225,15 +246,16 @@
                 this.locationWatchId = navigator.geolocation.watchPosition(
                     async (pos) => {
                         const runtime = Date.now() - this.getLocationTime;
-                        const { latitude } = pos.coords;
-                        const { longitude } = pos.coords;
-                        const geo = coordsToGeo(pos.coords.latitude, pos.coords.longitude);
+                        const { latitude, longitude, accuracy } = pos.coords;
+                        const geo = coordsToGeo(latitude, longitude, accuracy);
                         this.logger.debug(
                             'found position',
                             {
                                 latitude,
                                 longitude,
+                                accuracy,
                                 geo,
+                                pos,
                                 watcher: this.locationWatchId,
                                 'runtime in ms': runtime,
                             },
@@ -286,6 +308,7 @@
             de: {
                 'favorite stations': 'favorisierte Haltestellen',
                 'found stations': 'gefundene Haltestellen',
+                'your position': 'deine Position',
             },
         },
     };

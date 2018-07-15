@@ -104,7 +104,7 @@ export async function fetchSations(query) {
         data: {
             query,
             stopsOnly: true,
-            limit: 5,
+            limit: 7,
             assignedStops: true,
             dvb: true,
         },
