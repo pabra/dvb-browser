@@ -167,7 +167,6 @@
                 }]);
             },
             onShowLocationOverlay() {
-                // if (this.findStationGeo === null) return;
                 this.logger.debug('show current location', this.findStationGeo);
                 const list = [];
                 if (this.findStationGeo) {

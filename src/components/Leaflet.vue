@@ -130,9 +130,6 @@
                 marker.element = element;
                 marker.added = true;
                 this.allMarkersAdded = this.markers.every(m => m.added);
-                // setTimeout(() => {
-                //     element.openTooltip();
-                // }, 0);
             },
         },
     };
