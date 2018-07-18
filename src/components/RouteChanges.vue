@@ -141,7 +141,7 @@
             thead {
                 th {
                     border-color: $reroute-color;
-                    background: linear-gradient(to bottom, transparent, transparent 20%, $light-bg);
+                    background: linear-gradient(to bottom, white, white 20%, $light-bg);
 
                     .reroute-icon {
                         vertical-align: middle;
@@ -184,7 +184,7 @@
                         td {
                             background: linear-gradient(
                                 to top,
-                                transparent,
+                                white,
                                 $light-bg 40px,
                                 $light-bg,
                             );
