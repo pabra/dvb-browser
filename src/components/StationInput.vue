@@ -25,7 +25,7 @@
 
                 button.showLocation(
                     v-if="showLocation"
-                    @click="onShowLocation"
+                    @click.stop.prevent="onShowLocation"
                 )
                     i.material-icons location_on
 
@@ -33,7 +33,7 @@
                     v-if="showGps"
                     :disabled="disabledAll || disabledGps"
                     :class="{loading: loadingGps}"
-                    @click="onGetGps"
+                    @click.stop.prevent="onGetGps"
                 )
                     i.material-icons gps_not_fixed
 </template>
