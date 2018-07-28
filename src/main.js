@@ -3,6 +3,7 @@ import 'normalize-scss/sass/normalize/_import-now.scss';
 import 'skeleton-scss/scss/skeleton.scss';
 import 'material-design-icons/iconfont/material-icons.css';
 
+import 'core-js/es6/promise';
 import 'regenerator-runtime/runtime';
 
 import Vue from 'vue';
@@ -25,11 +26,11 @@ router.onError(vueRouterErrorHandler);
 function browserSupportsAllFeatures() {
     return (
         typeof window.fetch === 'function' &&
-        typeof window.Promise === 'function' &&
         typeof Object.assign === 'function' &&
         typeof Array.prototype.every === 'function' &&
         typeof Array.prototype.find === 'function' &&
         typeof Array.prototype.findIndex === 'function' &&
+        typeof Array.prototype.from === 'function' &&
         typeof String.prototype.startsWith === 'function' &&
         typeof String.prototype.trim === 'function' &&
         typeof Date.now === 'function' &&
