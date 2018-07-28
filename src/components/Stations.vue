@@ -8,11 +8,11 @@
             :disabledGps="loadingStations"
             :loadingStations="loadingStations"
             :loadingGps="loadingGeoLocation"
-            :showGps="geolocationAvailable"
+            :showGps="geolocationAvailable()"
             :showLocation="findStationGeo !== null || foundStations.length > 0"
             @getLocation="onGetGeolocation"
             @showLocationOverlay="onShowLocationOverlay"
-            @clear="foundStations=[]"
+            @clear="onClear"
         )
 
         table.u-full-width(v-if="foundStations.length")
@@ -66,7 +66,15 @@
     import { fetchSations } from '@/lib/fetch';
     import Leaflet from '@/components/Leaflet';
     import Logger, { errorToObject } from '@/lib/logger';
-    import { ensureInt, stationName, WGS84toGK4, coordsToGeo, parseGeo } from '@/lib/utils';
+    import { ensureInt, stationName, WGS84toGK4 } from '@/lib/utils';
+    import {
+        geolocationAvailable,
+        Position,
+        coordsToGeo,
+        geoToCoords,
+        withinGermany,
+        withinVvo,
+    } from '@/lib/location';
 
     export default {
         name: 'Stations',
@@ -78,19 +86,29 @@
             return {
                 loadingStations: false,
                 loadingGeoLocation: false,
-                locationWatchId: null,
-                getLocationTime: null,
                 findStationGeo: null,
                 foundStations: [],
                 findStation: '',
                 highlightStations: [],
                 logger: Logger.get(`${this.$options.name} component`),
+                position: new Position(),
+                location: null,
                 stationName,
+                geolocationAvailable,
             };
         },
         computed: {
             ...mapGetters(['sortedFavoriteStations']),
             ...mapState(['isOnline']),
+            locationGeoUri() {
+                // make geo URI from (GPS) locaton
+                if (!this.location) return null;
+                return coordsToGeo(
+                    this.location.latitude,
+                    this.location.longitude,
+                    this.location.accuracy,
+                );
+            },
             favoriteStationsToUpdate() {
                 return this.sortedFavoriteStations
                     .filter((station) => {
@@ -104,26 +122,32 @@
                         return 0;
                 });
             },
-            geolocationAvailable() {
-                return 'geolocation' in navigator;
-            },
         },
         watch: {
-            async findStation(value) {
-                this.findStationGeo = null;
+            locationGeoUri(value) {
                 if (!value) return;
-                if (value.length < 3) return;
-                if (value.startsWith('geo:')) {
-                    const parsedGeo = parseGeo(value);
-                    if (parsedGeo === null) return;
-                    this.logger.debug('parsedGeo', parsedGeo);
-                    this.findStationGeo = parsedGeo;
-                    const gk4 = WGS84toGK4(parsedGeo.latitude, parsedGeo.longitude);
+                this.findStation = value;
+            },
+            async findStation(value) {
+                this.findStationGeo = geoToCoords(value);
+                if (this.findStationGeo) {
+                    if (!withinVvo(this.findStationGeo.latitude, this.findStationGeo.longitude)) {
+                        this.msg(this.t('This location is not within VVO boundaries.'));
+                        return;
+                    }
+
+                    this.logger.debug('this.findStationGeo', this.findStationGeo);
+                    const gk4 = WGS84toGK4(
+                        this.findStationGeo.latitude,
+                        this.findStationGeo.longitude,
+                    );
                     this.logger.debug('gk4', gk4);
                     const coord = `coord:${Math.round(gk4[0])}:${Math.round(gk4[1])}`;
                     this.logger.debug('coord', coord);
                     this.foundStations = await this.getData(coord);
                 } else {
+                    if (!value) return;
+                    if (value.length <= 3) return;
                     this.foundStations = await this.getData(value);
                 }
             },
@@ -131,10 +155,10 @@
         created() {
             this.updateOneStation();
         },
-        beforeDestroy() {
-            this.clearLocationWatch();
-        },
         methods: {
+            msg(text, subject = null) {
+                this.$store.dispatch('messageAddAndReturn', { text, subject });
+            },
             highlight(station) {
                 this.highlightStations.push(station.id);
                 setTimeout(() => { this.highlightStations.shift(); }, 200);
@@ -180,6 +204,9 @@
                     });
                 }
                 this.foundStations.forEach((station) => {
+                    if (!withinGermany(station.coords[0], station.coords[1])) {
+                        return;
+                    }
                     list.push({
                         latitude: station.coords[0],
                         longitude: station.coords[1],
@@ -207,7 +234,6 @@
                 try {
                     res = await fetchSations(value);
                 } catch (err) {
-                    this.loadingStations = false;
                     res = [];
                     this.logger.error('getData cought error', {
                         error: await errorToObject(err),
@@ -228,75 +254,20 @@
 
                 this.addStation(stations[0], false);
             },
-            clearLocationWatch() {
-                if (this.locationWatchId !== null) {
-                    this.logger.debug('clear location watch', this.locationWatchId);
-                    navigator.geolocation.clearWatch(this.locationWatchId);
-                    this.locationWatchId = null;
-                    this.getLocationTime = null;
-                } else {
-                    this.logger.debug('no location watcher to clear.');
-                }
-            },
-            onGetGeolocation() {
+            async onGetGeolocation() {
                 this.loadingGeoLocation = true;
-                this.clearLocationWatch();
-                this.getLocationTime = Date.now();
-                this.locationWatchId = navigator.geolocation.watchPosition(
-                    async (pos) => {
-                        const runtime = Date.now() - this.getLocationTime;
-                        const { latitude, longitude, accuracy } = pos.coords;
-                        const geo = coordsToGeo(latitude, longitude, accuracy);
-                        this.logger.debug(
-                            'found position',
-                            {
-                                latitude,
-                                longitude,
-                                accuracy,
-                                geo,
-                                pos,
-                                watcher: this.locationWatchId,
-                                'runtime in ms': runtime,
-                            },
-                        );
-                        this.clearLocationWatch();
-                        this.loadingGeoLocation = false;
-                        this.findStation = geo;
-                    },
-                    async (err) => {
-                        const runtime = Date.now() - this.getLocationTime;
-                        if (
-                            err.code
-                            && err.code === err.TIMEOUT
-                            && runtime < 30000
-                        ) {
-                            this.logger.debug(
-                                'location watcher soft timeout',
-                                {
-                                    watcher: this.locationWatchId,
-                                    'runtime in ms': runtime,
-                                },
-                            );
-                            return;
-                        }
-                        this.logger.error(
-                            'geolocation.getCurrentPosition cought error',
-                            await errorToObject(err),
-                            {
-                                watcher: this.locationWatchId,
-                                'runtime in ms': runtime,
-                            },
-                        );
-                        this.clearLocationWatch();
-                        this.loadingGeoLocation = false;
-                    },
-                    {
-                        maximumAge: 15000,
-                        timeout: 3000,
-                        enableHighAccuracy: false,
-                    },
-                );
-                this.logger.debug('watchId', this.locationWatchId);
+                this.location = null;
+                try {
+                    this.location = await this.position.get();
+                    this.logger.debug('got location', this.location);
+                } catch (err) {
+                    this.logger.error('cought location error', await errorToObject(err));
+                }
+                this.loadingGeoLocation = false;
+            },
+            onClear() {
+                this.foundStations = [];
+                this.location = null;
             },
         },
         locales: {
@@ -305,6 +276,7 @@
                 // the translation in english
             },
             de: {
+                'This location is not within VVO boundaries.': 'Dieser Standort liegt nicht innerhalb der VVO-Grenzen.',
                 'favorite stations': 'favorisierte Haltestellen',
                 'found stations': 'gefundene Haltestellen',
                 'your position': 'deine Position',
