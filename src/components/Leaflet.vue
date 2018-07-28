@@ -137,6 +137,7 @@
 
 <style lang="scss" scoped>
     @import "~leaflet/dist/leaflet.css";
+    @import "~@/assets/scss/palette.scss";
 
     .map-wrap {
         height: 100%;
@@ -166,7 +167,7 @@
                 }
 
                 &.station::after {
-                    color: maroon;
+                    color: palette(Light Blue, 800);
                 }
 
                 &.station::before, &.station::after {
@@ -174,7 +175,7 @@
                 }
 
                 &.position::after {
-                    color: blue;
+                    color: palette(Red, 800);
                 }
 
                 &.position::before, &.position::after {
