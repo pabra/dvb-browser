@@ -230,15 +230,18 @@
                     return [];
                 }
                 this.loadingStations = true;
-                let res;
+                let res = [];
                 try {
                     res = await fetchSations(value);
                 } catch (err) {
-                    res = [];
-                    this.logger.error('getData cought error', {
-                        error: await errorToObject(err),
-                        value,
-                    });
+                    if (err.code === 1 || err.code === 2) {
+                        this.msg(this.t('No stations found.'));
+                    } else {
+                        this.logger.error('getData cought error', {
+                            error: await errorToObject(err),
+                            value,
+                        });
+                    }
                 }
                 this.loadingStations = false;
                 return res;
@@ -261,7 +264,18 @@
                     this.location = await this.position.get();
                     this.logger.debug('got location', this.location);
                 } catch (err) {
-                    this.logger.error('cought location error', await errorToObject(err));
+                    if (err.code === 1) {
+                        // PERMISSION_DENIED
+                        this.msg(this.t('Location detection was denied.'));
+                    } else if (err.code === 2) {
+                        // POSITION_UNAVAILABLE
+                        this.msg(this.t('Location detection unavailable.'));
+                    } else if (err.code === 3) {
+                        // TIMEOUT
+                        this.msg(this.t('Location detection timed out.'));
+                    } else {
+                        this.logger.error('cought location error', await errorToObject(err));
+                    }
                 }
                 this.loadingGeoLocation = false;
             },
@@ -276,6 +290,10 @@
                 // the translation in english
             },
             de: {
+                'Location detection timed out.': 'Zeitüberschreitung bei der Standortbestimmung.',
+                'Location detection unavailable.': 'Standortbestimmung nicht verfügbar.',
+                'Location detection was denied.': 'Standortbestimmung wurde abgelehnt.',
+                'No stations found.': 'Keine Haltestellen gefunden.',
                 'This location is not within VVO boundaries.': 'Dieser Standort liegt nicht innerhalb der VVO-Grenzen.',
                 'favorite stations': 'favorisierte Haltestellen',
                 'found stations': 'gefundene Haltestellen',
