@@ -93,6 +93,8 @@
                         return this.$translate.text('scheduled');
                     case 'AmplifyingTransport':
                         return this.$translate.text('amplifying transport');
+                    case 'ShortTerm':
+                        return this.$translate.text('short term');
                     default:
                         this.logger.error('missing translation for route change type', type);
                         return type;
@@ -107,6 +109,7 @@
             de: {
                 'amplifying transport': 'Verstärkung',
                 'Route changes': 'Linienänderungen',
+                'short term': 'kurzfristig',
                 lines: 'Linien',
                 scheduled: 'geplant',
                 type: 'Typ',
