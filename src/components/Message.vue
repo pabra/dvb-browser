@@ -2,7 +2,7 @@
     div(@click="message.remove" :class="message.level").message
         i(v-if="message.level").material-icons.level
         span(v-if="message.subject").subject {{ message.subject }}
-        span {{ message.id }}: {{ message.text }}
+        span {{ message.text }}
 </template>
 
 <script>

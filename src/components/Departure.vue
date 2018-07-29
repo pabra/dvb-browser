@@ -272,6 +272,9 @@
             }
         },
         methods: {
+            msg(text, subject = null) {
+                this.$store.dispatch('messageAddAndReturn', { text, subject });
+            },
             async getData() {
                 // do not fetch data if there is no stationId
                 if (!this.stationId) return;
@@ -287,10 +290,16 @@
                 try {
                     res = await fetchDeparture(this.stationId);
                 } catch (err) {
-                    this.logger.error('getData cought error', {
-                        error: await errorToObject(err),
-                        stationId: this.stationId,
-                    });
+                    if (err.code === 1) {
+                        this.msg(this.t('We got no data from server. Please try again.'));
+                    } else if (err.code === 2) {
+                        this.msg(this.t('No serving lines found. Check your selected vehicles in settings.'));
+                    } else {
+                        this.logger.error('getData cought error', {
+                            error: await errorToObject(err),
+                            stationId: this.stationId,
+                        });
+                    }
                     res = {};
                 }
                 this.apiData = res;
@@ -338,6 +347,10 @@
                 // the translation in english
             },
             de: {
+                'We got no data from server. Please try again.':
+                    'Wir haben keine Daten vom Server bekommen. Bitte versuche es erneut.',
+                'No serving lines found. Check your selected vehicles in settings.':
+                    'Keine Linen gefunden. Prüfe deine ausgewählten Verkehrsmittel in den Einstellungen.',
                 platform: 'Plattform',
                 direction: 'Richtung',
                 line: 'Linie',

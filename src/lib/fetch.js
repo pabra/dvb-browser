@@ -110,8 +110,18 @@ export async function fetchSations(query) {
         },
     });
 
-    if (!isApiResponseOk(res) || !res.data.Points) {
-        throw new FetchError(`fetch stations "${query}" caused unexpected response "${stringifyObj(res)}"`);
+    if (!isApiResponseOk(res) || !_.get(res, 'data.Points')) {
+        const err = new FetchError(`fetch stations "${query}" caused unexpected response "${stringifyObj(res)}"`);
+        if (!_.get(res, 'data')) {
+            // no data
+            err.code = 1;
+        } else if (_.get(res, 'data.PointStatus') === 'NotIdentified') {
+            // NotIdentified
+            err.code = 2;
+        } else {
+            err.code = 255;
+        }
+        throw err;
     }
 
     const stations = res.data.Points
@@ -154,7 +164,20 @@ export async function fetchDeparture(stationId, offset = 0, limit = 30) {
     });
 
     if (!isApiResponseOk(res)) {
-        throw new FetchError(`fetch departures for station "${stationId}" caused unexpected response "${stringifyObj(res)}"`);
+        const err = new FetchError(`fetch departures for station "${stationId}" caused unexpected response "${stringifyObj(res)}"`);
+        if (!_.get(res, 'data')) {
+            // no data
+            err.code = 1;
+        } else if (
+            _.get(res, 'data.Status.Code') === 'ServiceError' &&
+            _.get(res, 'data.Status.Message') === 'no serving lines found'
+        ) {
+            // no serving lines
+            err.code = 2;
+        } else {
+            err.code = 255;
+        }
+        throw err;
     }
 
     if (!res.data.Departures) res.data.Departures = [];
