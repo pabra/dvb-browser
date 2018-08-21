@@ -6,7 +6,18 @@
             :bounds="bounds"
             :padding="[10, 20]"
         )
-            v-tilelayer(url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png")
+            v-tilelayer(
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                :max-zoom=18
+                :maxZoom=18
+                attribution='&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            )
+            v-tilelayer(
+                url="http://openptmap.org/tiles/{z}/{x}/{y}.png"
+                :max-zoom=17
+                :opacity=0.7
+                attribution='Map data: &copy; <a href="http://www.openptmap.org">OpenPtMap</a> contributors'
+            )
             v-circle(
                 v-for="m of markers"
                 v-if="m.accuracy"
