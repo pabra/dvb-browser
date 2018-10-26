@@ -7,15 +7,14 @@
             :padding="[10, 20]"
         )
             v-tilelayer(
-                url="https://dvb.peppnet.de/osm_tiles/{z}/{x}/{y}.png"
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 :max-zoom=18
                 :maxZoom=18
                 attribution='&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             )
             v-tilelayer(
-                url="https://dvb.peppnet.de/pt_tiles/{z}/{x}/{y}.png"
+                url="http://openptmap.org/tiles/{z}/{x}/{y}.png"
                 :max-zoom=17
-                :maxZoom=17
                 :opacity=0.7
                 attribution='Map data: &copy; <a href="http://www.openptmap.org">OpenPtMap</a> contributors'
             )
