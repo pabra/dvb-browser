@@ -230,20 +230,23 @@ export async function fetchRouteChanges() {
         throw new FetchError(`fetch route changes caused unexpected response "${stringifyObj(res)}"`);
     }
 
-    const lines = res.data.Lines.reduce((indexedLines, line) => {
-        const cleanLine = {
-            id: parseInt(line.Id, 10),
-            line: line.Name,
-            mode: parseMot(line.Mot),
-        };
+    const lines = res.data.Lines
+        .filter(line => line.Mot)
+        .reduce((indexedLines, line) => {
+            const cleanLine = {
+                id: parseInt(line.Id, 10),
+                line: line.Name,
+                mode: parseMot(line.Mot),
+            };
 
-        indexedLines[cleanLine.id] = cleanLine;
+            indexedLines[cleanLine.id] = cleanLine;
 
-        return indexedLines;
+            return indexedLines;
     }, {});
 
     const routeChanges = res.data.Changes.reduce((indexedChanges, change) => {
         const sortedLines = change.LineIds
+            .filter(line => line.mode)
             .map(line => lines[parseInt(line, 10)])
             .sort((a, b) => {
                 const aVehIdx = vehicleOrder.indexOf(a.mode.name);
