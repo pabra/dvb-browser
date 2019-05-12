@@ -25,7 +25,8 @@
   "scripts": {
     "dev": "node build/dev-server.js",
     "start": "npm run dev",
-    "build": "node build/build.js && ./compress-dist.sh",
+    "build": "node build/build.js",
+    "postbuild": "./compress-dist.sh",
     "lint": "eslint --ext .js,.vue src"
   },
   "dependencies": {
