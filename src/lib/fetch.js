@@ -22,8 +22,8 @@ function parseApiDate(string) {
 
     // for departures on the same day: /Date(1513736087770+0100)/
     // departures on the next day: /Date(1513751520000-0000)/
-    const match = string.match(/Date\((\d{13})[+-]\d{4}\)/);
-    if (!match) throw ValueError(`unable to parse Date in "${string}"`);
+    const match = string.match(/Date\((\d{1,13})[+-]\d{4}\)/);
+    if (!match) throw new ValueError(`unable to parse Date in "${string}"`);
 
     return new Date(parseInt(match[1], 10));
 }
