@@ -23,11 +23,10 @@ find "$DIST_DIR" -type f -print0 | while IFS= read -r -d $'\0' file; do
                     outfile="${file}.br"
                     (
                         (
-                            increment "$outfile start" &&
+                            # increment "$outfile start" &&
                             $BROTLI -c "$file" > "$outfile" &&
                             $TOUCH -r "$file" "$outfile"
-                        ) &&
-                        decrement "$outfile done"
+                        ) # && decrement "$outfile done"
                     ) &
                 fi
 
@@ -35,11 +34,10 @@ find "$DIST_DIR" -type f -print0 | while IFS= read -r -d $'\0' file; do
                     outfile="${file}.gz"
                     (
                         (
-                            increment "$outfile start" &&
+                            # increment "$outfile start" &&
                             $ZOPFLI -c "$file" > "$outfile" &&
                             $TOUCH -r "$file" "$outfile"
-                        ) &&
-                        decrement "$outfile done"
+                        ) # && decrement "$outfile done"
                     ) &
                 else
                     echo "${file}.gz"
