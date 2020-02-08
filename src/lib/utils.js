@@ -33,6 +33,13 @@ export const vehicles = {
         icon_url: 'https://www.dvb.de/assets/img/trans-icon/transport-bus.svg',
         ligature: 'directions_bus',
     },
+    plusbus: {
+        title: 'PlusBus',
+        name: 'plusbus',
+        mot: 'PlusBus',
+        icon_url: 'https://www.dvb.de/assets/img/trans-icon/transport-bus.svg',
+        ligature: 'directions_bus',
+    },
     suburbanrailway: {
         title: 'S-Bahn',
         name: 'suburbanrailway',
