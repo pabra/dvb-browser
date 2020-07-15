@@ -63,7 +63,7 @@
     "imports-loader": "^0.8.0",
     "js-logger": "^1.4.1",
     "json-loader": "^0.5.7",
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.19",
     "markdown-loader": "^3.0.0",
     "material-design-icons": "^3.0.1",
     "node-sass": "^4.9.0",
