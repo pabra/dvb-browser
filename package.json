@@ -74,7 +74,7 @@
     "portfinder": "^1.0.13",
     "prerender-spa-plugin": "^3.2.1",
     "proj4": "^2.4.4",
-    "pug": "^2.0.3",
+    "pug": "^3.0.1",
     "pug-plain-loader": "^1.0.0",
     "querystring": "^0.2.0",
     "regenerator-runtime": "^0.11.1",
