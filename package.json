@@ -82,7 +82,7 @@
     "sass-extract": "^2.1.0",
     "sass-loader": "^7.0.3",
     "semver": "^5.5.0",
-    "shelljs": "^0.8.2",
+    "shelljs": "^0.8.5",
     "skeleton-scss": "^2.0.4",
     "sourcemapped-stacktrace": "^1.1.8",
     "url-loader": "^1.0.1",
